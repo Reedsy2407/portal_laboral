@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { AuthService } from '../servicios/auth.service';  // Asegúrate de que este servicio exista
-import { LoginRequest } from '../entidades/LoginRequest';  // Asegúrate de que esta clase esté definida
+import { AuthService } from '../servicios/auth.service';  
+import { LoginRequest } from '../entidades/LoginRequest'; 
 import { Router } from '@angular/router';
 
 @Component({
@@ -12,7 +12,7 @@ import { Router } from '@angular/router';
 })
 export class LoginComponent implements OnInit {
 
-  rolActivo: 'empleador' | 'postulante' = 'empleador';
+  rolActivo: 'empresa' | 'postulante' = 'empresa';
   formLogin: FormGroup;
   estaLogueado: boolean = false;
   mensajeError: string = '';
@@ -28,41 +28,43 @@ export class LoginComponent implements OnInit {
     this.estaLogueado = this.authService.estaLogueado();
   }
 
-  cambiarRol(rol: 'empleador' | 'postulante'): void {
+  cambiarRol(rol: 'empresa' | 'postulante'): void {
     this.rolActivo = rol;
   }
   
   enviarLogin() {
-    this.mensajeError = '';
-  
-    if (this.formLogin.invalid) return;
-  
-    const datosLogin: LoginRequest = this.formLogin.value;
-  
-    this.authService.login(datosLogin).subscribe({
-      next: (response: any) => {
-        const rolUsuario = response.rol?.nombre?.toLowerCase();
-        const idRol = response.rol?.id;
-  
-        if (!rolUsuario) {
-          this.mensajeError = 'Este usuario no tiene un rol válido';
-          return;
-        }
-  
-        const esAdmin = rolUsuario === 'admin' || idRol === 1;
-  
-        if (!esAdmin && rolUsuario !== this.rolActivo.toLowerCase()) {
-          this.mensajeError = `Este usuario no tiene acceso como ${this.rolActivo}`;
-          return;
-        }
-  
-        localStorage.setItem('token', response.token);
-        this.router.navigate(['/inicio']);
-      },
-      error: () => {
-        this.mensajeError = 'Correo o contraseña incorrectos';
+  this.mensajeError = '';
+
+  if (this.formLogin.invalid) return;
+
+  const datosLogin: LoginRequest = this.formLogin.value;
+
+  this.authService.login(datosLogin).subscribe({
+    next: (response: any) => {
+      let rolUsuario = response.rol?.nombre?.toLowerCase();
+      const idRol = response.rol?.id;
+
+      if (!rolUsuario) {
+        this.mensajeError = 'Este usuario no tiene un rol válido';
+        return;
       }
-    });
-  }
+
+      const esAdmin = rolUsuario === 'admin' || idRol === 1;
+
+      if (!esAdmin && rolUsuario !== this.rolActivo.toLowerCase()) {
+        this.mensajeError = `Este usuario no tiene acceso como ${this.rolActivo}`;
+        return;
+      }
+      console.log(response);
+      this.authService.guardarToken(response.token, response.idUsuario, response.rol.id);
+
+      this.router.navigate(['/inicio']);
+    },
+    error: () => {
+      this.mensajeError = 'Correo o contraseña incorrectos';
+    }
+  });
+}
+
   
 }

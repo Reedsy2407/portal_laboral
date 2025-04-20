@@ -20,13 +20,18 @@ export class AuthService {
   
   logout() {
     localStorage.removeItem('token');
+    localStorage.removeItem('email');
+    localStorage.removeItem('idRol');
+    localStorage.removeItem('usuarioId');
+
   }
 
   
 
-  guardarToken(token: string, idUsuario: number) {
+  guardarToken(token: string, idUsuario: number, idRol: number) {
     localStorage.setItem('token', token);
-    localStorage.setItem('usuarioId', idUsuario.toString());
+    localStorage.setItem('idUsuario', idUsuario.toString());
+    localStorage.setItem('idRol', idRol.toString());
   }
 
   obtenerToken(): string | null {

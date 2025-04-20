@@ -2,7 +2,7 @@
     <div class="login-card">
       <div class="login-header">
         <h2>Bienvenido a Papu Laboral</h2>
-        <div *ngIf="rolActivo !== 'empleador'">
+        <div *ngIf="rolActivo !== 'empresa'">
           <p>Accede a tu cuenta para postularte a infinidad de ofertas</p>
         </div>
 
@@ -13,7 +13,7 @@
       </div>
   
       <div class="tabs">
-        <button [ngClass]="{'active': rolActivo === 'empleador'}" (click)="cambiarRol('empleador')">Empleador</button>
+        <button [ngClass]="{'active': rolActivo === 'empresa'}" (click)="cambiarRol('empresa')">Empleador</button>
         <button [ngClass]="{'active': rolActivo === 'postulante'}" (click)="cambiarRol('postulante')">Postulante</button>
       </div>
   
@@ -26,7 +26,7 @@
           <input type="password" formControlName="password" placeholder="Contraseña" required />
         </div>
         
-        <div *ngIf="rolActivo === 'empleador'" class="role-info">
+        <div *ngIf="rolActivo === 'empresa'" class="role-info">
           <p>Acceso como <strong>Empleador</strong></p>
         </div>
         <div *ngIf="rolActivo === 'postulante'" class="role-info">
