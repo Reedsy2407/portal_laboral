@@ -1,0 +1,31 @@
+<div class="row mt-4" *ngIf="listaOfertas.length > 0">
+  <!-- Lista de Ofertas -->
+  <div class="col-md-6">
+    <div *ngFor="let oferta of listaOfertas" 
+         (click)="ofertaSeleccionada = oferta"
+         [ngClass]="{'border border-primary': oferta === ofertaSeleccionada}"
+         class="card shadow-sm p-3 rounded mb-3 cursor-pointer">
+
+      <h5 class="fw-bold">{{ oferta.titulo }}</h5>
+      <p class="mb-0 text-muted">{{ oferta.empresa.nombre }}</p>
+      <small class="text-muted">{{ oferta.lugar }}</small>
+      <small class="text-muted d-block">S/. {{ oferta.sueldo | number: '1.2'}}</small>
+      <small class="text-muted">Publicado el <b>{{ oferta.fecha | date: 'dd/MM/yyyy' }}</b></small>
+    </div>
+  </div>
+
+  <!-- Panel Detalle -->
+<div class="col-md-6" *ngIf="ofertaSeleccionada">
+    <div class="card p-3">
+      <h5 class="fw-bold">Descripción del Puesto</h5>
+      <p>{{ ofertaSeleccionada.descripcion }}</p>
+  
+      <button 
+  class="btn w-100"
+  [ngClass]="estaPostulado(ofertaSeleccionada.idPublicacion) ? 'btn-success' : 'btn-outline-primary'"
+  (click)="estaPostulado(ofertaSeleccionada.idPublicacion) ? despostular(ofertaSeleccionada) : postular(ofertaSeleccionada)">
+  {{ estaPostulado(ofertaSeleccionada.idPublicacion) ? 'Ya estás postulado (Despostularse)' : 'Postular' }}
+</button>
+  
+    </div>
+  </div>

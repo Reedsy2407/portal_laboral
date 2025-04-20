@@ -1,0 +1,47 @@
+<div class="login-wrapper">
+    <div class="login-card">
+      <div class="login-header">
+        <h2>Bienvenido a Papu Laboral</h2>
+        <div *ngIf="rolActivo !== 'empleador'">
+          <p>Accede a tu cuenta para postularte a infinidad de ofertas</p>
+        </div>
+
+        <div *ngIf="rolActivo !== 'postulante'">
+          <p>Accede a tu cuenta para publicar y gestionar ofertas</p>
+        </div>
+        
+      </div>
+  
+      <div class="tabs">
+        <button [ngClass]="{'active': rolActivo === 'empleador'}" (click)="cambiarRol('empleador')">Empleador</button>
+        <button [ngClass]="{'active': rolActivo === 'postulante'}" (click)="cambiarRol('postulante')">Postulante</button>
+      </div>
+  
+      <!-- Formulario reactivo-->
+      <form [formGroup]="formLogin" (ngSubmit)="enviarLogin()">
+        <div class="form-group">
+          <input type="email" formControlName="correo" placeholder="Correo Electrónico" required />
+        </div>
+        <div class="form-group">
+          <input type="password" formControlName="password" placeholder="Contraseña" required />
+        </div>
+        
+        <div *ngIf="rolActivo === 'empleador'" class="role-info">
+          <p>Acceso como <strong>Empleador</strong></p>
+        </div>
+        <div *ngIf="rolActivo === 'postulante'" class="role-info">
+          <p>Acceso como <strong>Postulante</strong></p>
+        </div>
+  
+        <button type="submit" class="login-button">Iniciar Sesión</button>
+        <div *ngIf="mensajeError" class="error-message">
+          {{ mensajeError }}
+        </div>
+        
+      </form>
+  
+      <div class="login-footer">
+        <a href="#">¿Olvidaste tu contraseña?</a>
+      </div>
+    </div>
+</div>

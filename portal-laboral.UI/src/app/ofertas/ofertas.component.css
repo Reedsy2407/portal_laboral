@@ -1,0 +1,23 @@
+.bi{
+    color: red;
+}
+
+.input-group-text{
+    background-color: transparent;
+    border-right: none;
+}
+
+.bi-search{
+    color:white;
+    
+}
+
+.cursor-pointer {
+    cursor: pointer;
+  }
+  
+  .border-primary {
+    border-width: 2px !important;
+    box-shadow: 0 0 0 0.15rem rgba(13, 110, 253, 0.25);
+  }
+  

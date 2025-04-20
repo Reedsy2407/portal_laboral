@@ -1,0 +1,17 @@
+<h2>Lista de Usuarios</h2>
+
+<div *ngIf="usuarios.length > 0; else sinUsuarios">
+  <ul>
+    <li *ngFor="let u of usuarios">
+      <strong>{{ u.nombre }} {{ u.apellido }}</strong><br>
+      Correo: {{ u.correo }}<br>
+      Teléfono: {{ u.contacto.telefono }}<br>
+      LinkedIn: <a href="{{ u.contacto.linkedin }}" target="_blank">{{ u.contacto.linkedin }}</a><br>
+      Sitio web: <a href="{{ u.contacto.sitioWeb }}" target="_blank">{{ u.contacto.sitioWeb }}</a>
+    </li>
+  </ul>
+</div>
+
+<ng-template #sinUsuarios>
+  <p>No hay usuarios registrados.</p>
+</ng-template>
