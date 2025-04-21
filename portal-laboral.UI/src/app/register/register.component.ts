@@ -4,6 +4,8 @@ import { AuthService } from '../servicios/auth.service';
 import { Router } from '@angular/router';
 import { RolService } from '../servicios/rol.service';
 import { Rol } from '../entidades/Rol';
+import { EmpresaService } from '../servicios/empresa.service';
+import { Empresa } from '../entidades/Empresa';
 
 @Component({
   selector: 'app-register',
@@ -13,21 +15,39 @@ import { Rol } from '../entidades/Rol';
 })
 export class RegisterComponent implements OnInit {
   formRegistro: FormGroup;
+  empresaForm: FormGroup;
   cargando: boolean = false;
   roles: any[] = [];
+  empresaRolId: number = 0;
+  empresas: Empresa[] = [];
+  empresasFiltradas: Empresa[] = [];
+  mostrarSugerencias = false;
 
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
     private router: Router,
-    private rolService: RolService
+    private rolService: RolService,
+    private empresaService: EmpresaService
   ) {
     this.formRegistro = this.fb.group({
       nombre: ['', Validators.required],
       apellido: ['', Validators.required],
       correo: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(6)]],
-      rolId: ['', Validators.required],
+      password: ['', [Validators.required, Validators.minLength(3)]],
+      rolId: [this.roles.find(rol => rol.nombre === 'Empresa')?.id || '', Validators.required],
+      telefono: [''],
+      sitioWeb: [''],
+      linkedin: [''],
+      empresa: ['']
+    });
+
+    this.empresaForm = this.fb.group({
+      nombre: ['', Validators.required],
+      ruc: ['', [Validators.required, Validators.pattern(/^\d{11}$/)]],
+      correo: ['', [Validators.required, Validators.email]],
+      direccion: ['', Validators.required],
+      descripcion: [''],
       telefono: [''],
       sitioWeb: [''],
       linkedin: ['']
@@ -36,13 +56,21 @@ export class RegisterComponent implements OnInit {
 
   ngOnInit() {
     this.cargarRoles();
+    this.cargarEmpresas();
+
+    this.formRegistro.get('empresa')?.valueChanges.subscribe(valor => {
+      this.filtrarEmpresas(valor);
+    });
   }
 
   cargarRoles() {
     this.rolService.obtenerRoles().subscribe({
       next: (data: Rol[]) => {
-        this.roles = data;
-        console.log(this.roles)
+        this.roles = data.filter(rol => rol.nombre !== 'ADMIN');
+        const empresaRol = this.roles.find(rol => rol.nombre === 'EMPRESA');
+        if (empresaRol) {
+          this.empresaRolId = empresaRol.id;
+        }
       },
       error: (error: any) => {
         console.error('Error al cargar roles:', error);
@@ -50,6 +78,30 @@ export class RegisterComponent implements OnInit {
     });
   }
 
+  cargarEmpresas(){
+    this.empresaService.listarEmpresa().subscribe(data => {
+      this.empresas = data;
+      console.log(data);
+    });
+  }
+
+  filtrarEmpresas(valor: string) {
+    const texto = valor?.toLowerCase() || '';
+    this.empresasFiltradas = this.empresas.filter(emp =>
+      emp.nombre.toLowerCase().includes(texto)
+    );
+    this.mostrarSugerencias = true;
+  }
+  
+  seleccionarEmpresa(empresa: Empresa) {
+    this.formRegistro.get('empresa')?.setValue(empresa.nombre);
+    this.mostrarSugerencias = false;
+  }
+  
+  ocultarSugerenciasConDelay() {
+    setTimeout(() => this.mostrarSugerencias = false, 200);
+  }
+  
   register() {
     if (this.formRegistro.invalid) {
       this.formRegistro.markAllAsTouched();
@@ -80,13 +132,32 @@ export class RegisterComponent implements OnInit {
         this.cargando = false;
         this.router.navigate(['/login']);
       },
-      error: (err) => {
-        console.error("Error completo:", err);
-        const mensaje = err?.error || err?.message || 'Error desconocido';
-        alert("Error al registrar: " + mensaje);
+      error: () => {
         this.cargando = false;
       }
     });
   }
+
+  guardarEmpresa() {
+    const empresaData = this.empresaForm.value;
+    const contacto = {
+      telefono: empresaData.telefono,
+      sitioWeb: empresaData.sitioWeb,
+      linkedin: empresaData.linkedin
+    };
+  
+    const empresa = {
+      nombre: empresaData.nombre,
+      ruc: empresaData.ruc,
+      correo: empresaData.correo,
+      direccion: empresaData.direccion,
+      descripcion: empresaData.descripcion,
+      contacto: contacto 
+    };
+  
+    this.empresaService.guardarEmpresa(empresa).subscribe();
+  }
+  
+  
   
 }

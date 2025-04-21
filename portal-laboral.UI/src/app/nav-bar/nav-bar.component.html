@@ -1,7 +1,9 @@
 <div class="container-fluid p-0">
   <nav class="navbar navbar-expand-lg bg-light navbar-light py-3 py-lg-0 px-lg-5">
     <a [routerLink]="['/inicio']" class="navbar-brand ml-lg-3">
-      <h1 class="m-0 display-5 text-uppercase text-primary" ><i class="fa fa-truck mr-2"></i>PORTAL LABORAL</h1>
+      <h1 class="m-0 display-5 text-uppercase text-primary">
+        <i class="fa fa-truck mr-2"></i>PORTAL LABORAL
+      </h1>
     </a>
     <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
       <span class="navbar-toggler-icon"></span>
@@ -9,15 +11,20 @@
     <div class="collapse navbar-collapse justify-content-between px-lg-3" id="navbarCollapse">
       <div class="navbar-nav m-auto py-0">
 
-        <div *ngFor="let menu of menus">
-          <div *ngIf="!(menu.nombre === 'Login')" [routerLink]="menu.url" class="nav-item nav-link">
+        <!-- Mostrar menú solo si el usuario está logueado -->
+        <ng-container *ngIf="estaLogueado; else mostrarLogin">
+          <a *ngFor="let menu of menus" [routerLink]="menu.url" class="nav-item nav-link">
             {{ menu.nombre }}
-          </div>
-        </div>
+          </a>
 
-        <a class="nav-item nav-link" (click)="logout()">Cerrar sesión</a>
+          <a class="nav-item nav-link" (click)="logout()">Cerrar sesión</a>
+        </ng-container>
+
+        <ng-template #mostrarLogin>
+          <a class="nav-item nav-link" [routerLink]="'/login'">Iniciar Sesión</a>
+        </ng-template>
+
       </div>
-
     </div>
   </nav>
 </div>

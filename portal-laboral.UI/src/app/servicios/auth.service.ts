@@ -26,8 +26,6 @@ export class AuthService {
 
   }
 
-  
-
   guardarToken(token: string, idUsuario: number, idRol: number) {
     localStorage.setItem('token', token);
     localStorage.setItem('idUsuario', idUsuario.toString());

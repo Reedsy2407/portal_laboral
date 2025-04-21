@@ -13,6 +13,7 @@ import { RegisterComponent } from './register/register.component';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 
 import { JwtInterceptor } from './interceptors/jwt.interceptor';
+import { ReclutamientoComponent } from './reclutamiento/reclutamiento.component';
 
 @NgModule({
   declarations: [
@@ -23,7 +24,8 @@ import { JwtInterceptor } from './interceptors/jwt.interceptor';
     OfertasComponent,
     LoginComponent,
     UsuariosComponent,
-    RegisterComponent
+    RegisterComponent,
+    ReclutamientoComponent  
   ],
   imports: [
     BrowserModule,

@@ -1,15 +1,8 @@
 package com.portal_laboral.portal_laboral.entities;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Embedded;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
+import java.util.List;
 
 
 @Entity
@@ -29,20 +22,18 @@ public class Empresa {
     @Column(name = "correo_empresa", unique = true)
     private String correo;
 
+    @Column(name = "direccion_empresa", unique = true)
+    private String direccion;
+
     @Column(name = "desc_empresa")
     private String descripcion;
-
-    //los embebidos pe
-    @Embedded
-    private Direccion direccion;
 
     @Embedded
     private Contacto contacto;
 
 
-    @ManyToOne
-    @JoinColumn(name="id_ubicacion")
-    private Ubicacion ubicacion; // provincia o distrito
+    @OneToMany(mappedBy = "empresa")
+    private List<Usuario> usuarios;
 
     public Empresa() { }
 
@@ -86,13 +77,6 @@ public class Empresa {
         this.descripcion = descripcion;
     }
 
-    public Direccion getDireccion() {
-        return direccion;
-    }
-    public void setDireccion(Direccion direccion) {
-        this.direccion = direccion;
-    }
-
     public Contacto getContacto() {
         return contacto;
     }
@@ -100,10 +84,4 @@ public class Empresa {
         this.contacto = contacto;
     }
 
-    public Ubicacion getUbicacion() {
-        return ubicacion;
-    }
-    public void setUbicacion(Ubicacion ubicacion) {
-        this.ubicacion = ubicacion;
-    }
 }

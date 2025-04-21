@@ -40,7 +40,7 @@ public class SecurityConfig {
                 .cors(cors->{})
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/**", "/rol/listar").permitAll()
+                        .requestMatchers("/auth/**", "/rol/listar", "/empresa/guardar", "/empresa/listar").permitAll()
                         .anyRequest().authenticated()
                 )
                 .authenticationProvider(daoAuthenticationProvider())

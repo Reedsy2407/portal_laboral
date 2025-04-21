@@ -1,10 +1,178 @@
-input.ng-touched.ng-invalid,
-select.ng-touched.ng-invalid {
-  border: 1px solid red;
+/* Contenedor general*/
+.login-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #FF4800 !important;
 }
 
-.error {
-  color: red;
-  font-size: 0.9em;
-  margin-bottom: 0.5em;
+.login-card {
+  background: #ffffff;
+  border-radius: 10px;
+  padding: 40px 30px;
+  box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.15);
+  max-width: 600px; 
+  width: 90%;
+  animation: cardEntry 1s ease-out;
+}
+
+
+@keyframes cardEntry {
+  0% {
+    opacity: 0;
+    transform: translateY(-50px) scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Cabecera  */
+.login-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.login-header img {
+  width: 80px;
+  margin-bottom: 10px;
+}
+
+.login-header h2 {
+  margin: 10px 0 5px;
+  font-family: 'Helvetica Neue', sans-serif;
+  color: #FF4800;
+}
+
+.login-header p {
+  color: #666;
+  font-size: 14px;
+}
+
+
+/* campos del formulario */
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 12px 15px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 14px;
+  transition: border-color 0.3s ease;
+}
+
+.form-group input:focus {
+  border-color: #FF4800;
+  outline: none;
+}
+
+/* Botón de login */
+.login-button {
+  width: 100%;
+  padding: 12px 15px;
+  border: none;
+  border-radius: 5px;
+  background: #FF4800;
+  color: #fff;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.login-button:hover {
+  background: #ff7f00;
+}
+
+.role-info {
+  text-align: center;
+  color: #333;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+/* Pie*/
+.login-footer {
+  text-align: center;
+  margin-top: 15px;
+}
+
+.login-footer a {
+  color: #FF4800;
+  text-decoration: none;
+  font-size: 14px;
+  transition: color 0.3s ease;
+}
+
+.login-footer a:hover {
+  color: #ff7f00;
+}
+
+.continue-button{
+  width: 100%;
+  padding: 12px 15px;
+  border: none;
+  background: #fff;
+  color: #FF4800;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.continue-button:hover{
+  color: #be3600;
+  background: #fff;
+}
+
+.tabs {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+  gap: 10px;
+}
+
+.tab-button {
+  padding: 10px 20px;
+  border: 2px solid #FF4800;
+  background-color: #fff;
+  color: #FF4800;
+  border-radius: 25px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.tab-button:hover {
+  background-color: #ffe3d1;
+}
+
+.tab-button.active {
+  background-color: #FF4800;
+  color: #fff;
+}
+
+.sugerencias-lista {
+  position: absolute;
+  background: white;
+  border: 1px solid #ccc;
+  max-height: 200px;
+  overflow-y: auto;
+  width: 100%;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  z-index: 10;
+}
+
+.sugerencias-lista li {
+  padding: 8px;
+  cursor: pointer;
+}
+
+.sugerencias-lista li:hover {
+  background-color: #eee;
 }

@@ -1,3 +1,3 @@
-<app-nav-bar *ngIf="!esRutaLogin()"></app-nav-bar>
+<app-nav-bar *ngIf="!validarRuta()"></app-nav-bar>
 <router-outlet />
-<app-footer *ngIf="!esRutaLogin()"></app-footer>
+<app-footer *ngIf="!validarRuta()"></app-footer>

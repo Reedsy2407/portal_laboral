@@ -12,7 +12,8 @@ export class AppComponent {
 
   constructor(private router: Router){}
 
-  esRutaLogin(): boolean {
-    return this.router.url === '/login'
+  validarRuta(): boolean {
+    return this.router.url === '/login' || this.router.url === '/register';
   }
+  
 }

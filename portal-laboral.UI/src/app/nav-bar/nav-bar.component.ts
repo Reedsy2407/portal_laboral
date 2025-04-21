@@ -27,21 +27,22 @@ export class NavBarComponent implements OnInit {
 
   ngOnInit(): void {
     this.estaLogueado = this.authService.estaLogueado();
-    
-    const idRol = this.authService.getIdRol();
-
-    if (idRol) {
-      this.menuService.listarMenuPorRol(idRol).subscribe({
-        next: (data) => {
-          this.menus = data;
-        },
-        error: (err) => {
-          console.error('Error al obtener menús:', err);
-        }
-      });
+  
+    if (this.estaLogueado) {
+      const idRol = this.authService.getIdRol();
+      if (idRol) {
+        this.menuService.listarMenuPorRol(idRol).subscribe({
+          next: (data) => {
+            this.menus = data.filter(menu => menu.nombre.toLowerCase() !== 'login');
+          },
+          error: (err) => {
+            console.error('Error al obtener menús:', err);
+          }
+        });
+      }
     }
   }
-
+  
   logout() {
     this.authService.logout();
     this.router.navigate(['/login'])

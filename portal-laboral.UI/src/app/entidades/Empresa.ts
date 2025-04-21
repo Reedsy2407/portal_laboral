@@ -1,5 +1,5 @@
 export interface Empresa {
-    id: number;
+    id?: number;
     nombre: string;
     ruc: string;
     correo: string;

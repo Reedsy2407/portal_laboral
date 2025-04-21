@@ -10,8 +10,6 @@ import java.util.Date;
 
 @Component
 public class JwtUtil {
-
-
     private final String SECRET = "MiSuperClaveJWTDeMasDe32Caracteres123";
     private final long EXPIRATION_TIME = 86400000; // 24 horas en ms
 

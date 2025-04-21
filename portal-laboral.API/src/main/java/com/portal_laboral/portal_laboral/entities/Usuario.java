@@ -32,6 +32,10 @@ public class Usuario {
     @JoinColumn(name = "id_rol", nullable = false)
     private Rol rol;
 
+    @ManyToOne
+    @JoinColumn(name = "id_empresa", nullable = true)
+    private Empresa empresa;
+
     public Usuario() { }
 
     public Usuario (Integer usuarioId) { }
@@ -93,6 +97,11 @@ public class Usuario {
         this.fecha = fecha;
     }
 
+    public Empresa getEmpresa() {
+        return empresa;
+    }
 
-    
+    public void setEmpresa(Empresa empresa) {
+        this.empresa = empresa;
+    }
 }

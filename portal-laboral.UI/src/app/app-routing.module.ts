@@ -5,13 +5,16 @@ import { OfertasComponent } from './ofertas/ofertas.component';
 import { LoginComponent } from './login/login.component';
 import { UsuariosComponent } from './usuarios/usuarios.component';
 import { RegisterComponent } from './register/register.component';
+import { ReclutamientoComponent } from './reclutamiento/reclutamiento.component';
 
 const routes: Routes = [
-  {path:"inicio", component: InicioComponent},
-  {path:"ofertas", component: OfertasComponent},
-  { path: "login", component: LoginComponent },
+  {path:'', component: InicioComponent, pathMatch: 'full'},
+  {path:'inicio', component: InicioComponent},
+  {path:'ofertas', component: OfertasComponent},
+  { path: 'login', component: LoginComponent },
   { path: 'usuarios', component: UsuariosComponent },
-  { path: 'register', component: RegisterComponent }
+  { path: 'register', component: RegisterComponent },
+  { path: 'reclutamiento', component: ReclutamientoComponent}
 
 ];
 

@@ -1,57 +1,153 @@
-<h2>Registro de Usuario</h2>
+<div class="login-wrapper">
+  <div class="login-card my-5">
+    <div class="login-header">
+      <h2>Bienvenido a Papu Laboral</h2>
 
-<form [formGroup]="formRegistro" (ngSubmit)="register()">
-  <!-- Nombre -->
-  <label for="nombre">Nombre:</label>
-  <input id="nombre" type="text" formControlName="nombre" />
-  <div *ngIf="formRegistro.get('nombre')?.touched && formRegistro.get('nombre')?.invalid" class="error">
-    El nombre es obligatorio.
+      
+    </div>
+    
+
+    <form [formGroup]="formRegistro" (ngSubmit)="register()">
+      <div class="tabs">
+        <button *ngFor="let rol of roles"
+                type="button"
+                class="tab-button"
+                [class.active]="formRegistro.get('rolId')?.value === rol.id"
+                (click)="formRegistro.get('rolId')?.setValue(rol.id)">
+          {{ rol.nombre }}
+        </button>
+      </div>
+    
+      <div class="form-group">
+        <input type="text" formControlName="nombre" placeholder="Nombre" />
+      </div>
+    
+      <div class="form-group">
+        <input type="text" formControlName="apellido" placeholder="Apellido" />
+      </div>
+    
+      <div class="form-group">
+        <input type="email" formControlName="correo" placeholder="Correo electrónico" />
+      </div>
+    
+      <div class="form-group">
+        <input type="password" formControlName="password" placeholder="Contraseña" />
+      </div>
+    
+      <div class="form-group">
+        <input type="text" formControlName="telefono" placeholder="Teléfono" />
+      </div>
+    
+      <div class="form-group">
+        <input type="text" formControlName="sitioWeb" placeholder="Sitio Web" />
+      </div>
+    
+      <div class="form-group">
+        <input type="text" formControlName="linkedin" placeholder="LinkedIn" />
+      </div>
+
+      <div class="form-group" *ngIf="formRegistro.get('rolId')?.value === empresaRolId">
+        <input type="text"
+       formControlName="empresa"
+       placeholder="Empresa a la que perteneces"
+       (blur)="ocultarSugerenciasConDelay()" 
+       (focus)="mostrarSugerencias = true"
+       autocomplete="off"/>
+      
+        <ul *ngIf="mostrarSugerencias && empresasFiltradas.length > 0" class="sugerencias-lista">
+          <li *ngFor="let empresa of empresasFiltradas" (mousedown)="seleccionarEmpresa(empresa)">
+            {{ empresa.nombre }}
+          </li>
+        </ul>
+      </div>
+      
+      
+      
+    
+      <button type="submit" class="login-button" [disabled]="cargando">
+        {{ cargando ? 'Registrando...' : 'Registrarse' }}
+      </button>
+    </form>
+    
+    <div class="login-footer" *ngIf="formRegistro.get('rolId')?.value === empresaRolId">
+      <a href="#" data-bs-toggle="modal" data-bs-target="#registroEmpresaModal">
+        ¿No tienes a tu empresa registrada?<strong> Haz click aquí</strong>
+      </a>
+    </div>
+
+    <div class="modal fade" id="registroEmpresaModal" tabindex="-1" aria-labelledby="registroEmpresaModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+        
+          <div class="modal-header">
+            <h5 class="modal-title" id="registroEmpresaModalLabel">Registrar Nueva Empresa</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+          </div>
+          
+          <div class="modal-body">
+            <form [formGroup]="empresaForm" (submit)="guardarEmpresa()">
+              <div class="row">
+                <div class="col-6 mb-3">
+                  <label class="form-label">Nombre de la Empresa</label>
+                  <input type="text" class="form-control" formControlName="nombre">
+                  <div class="text-danger" *ngIf="empresaForm.get('nombre')?.touched && empresaForm.get('nombre')?.invalid">
+                    Nombre es requerido.
+                  </div>
+                </div>
+            
+                <div class="col-6 mb-3">
+                  <label class="form-label">RUC</label>
+                  <input type="text" class="form-control" formControlName="ruc">
+                  <div class="text-danger" *ngIf="empresaForm.get('ruc')?.touched && empresaForm.get('ruc')?.invalid">
+                    RUC válido requerido (11 dígitos).
+                  </div>
+                </div>
+            
+                <div class="col-6 mb-3">
+                  <label class="form-label">Correo Electrónico</label>
+                  <input type="email" class="form-control" formControlName="correo">
+                  <div class="text-danger" *ngIf="empresaForm.get('correo')?.touched && empresaForm.get('correo')?.invalid">
+                    Correo válido requerido.
+                  </div>
+                </div>
+            
+                <div class="col-6 mb-3">
+                  <label class="form-label">Dirección</label>
+                  <input type="text" class="form-control" formControlName="direccion">
+                </div>
+              </div>
+            
+              <div class="row">
+                <div class="col-6 mb-3">
+                  <label class="form-label">Descripción</label>
+                  <textarea class="form-control" formControlName="descripcion"></textarea>
+                </div>
+                <div class="col-6 mb-3">
+                  <label class="form-label">Teléfono</label>
+                  <input type="tel" class="form-control" formControlName="telefono">
+                </div>
+                <div class="col-6 mb-3">
+                  <label class="form-label">Sitio Web</label>
+                  <input type="text" class="form-control" formControlName="sitioWeb">
+                </div>
+                <div class="col-6 mb-3">
+                  <label class="form-label">LinkedIn</label>
+                  <input type="text" class="form-control" formControlName="linkedin">
+                </div>
+              </div>
+            
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="submit" class="btn btn-primary" [disabled]="empresaForm.invalid">Registrar Empresa</button>
+              </div>
+            </form>
+            
+          </div>
+          
+        </div>
+      </div>
+    </div>
+    
+
   </div>
-
-  <!-- Apellido -->
-  <label for="apellido">Apellido:</label>
-  <input id="apellido" type="text" formControlName="apellido" />
-  <div *ngIf="formRegistro.get('apellido')?.touched && formRegistro.get('apellido')?.invalid" class="error">
-    El apellido es obligatorio.
-  </div>
-
-  <!-- Correo -->
-  <label for="correo">Correo:</label>
-  <input id="correo" type="email" formControlName="correo" />
-  <div *ngIf="formRegistro.get('correo')?.touched && formRegistro.get('correo')?.invalid" class="error">
-    Ingresa un correo válido.
-  </div>
-
-  <!-- Contraseña -->
-  <label for="password">Contraseña:</label>
-  <input id="password" type="password" formControlName="password" />
-  <div *ngIf="formRegistro.get('password')?.touched && formRegistro.get('password')?.invalid" class="error">
-    Mínimo 6 caracteres.
-  </div>
-
-  <!-- Rol (ComboBox) -->
-  <label for="rolId">Rol:</label>
-  <select id="rolId" formControlName="rolId">
-    <option value="">Selecciona un rol</option>
-    <option *ngFor="let rol of roles" [value]="rol.id">{{ rol.nombre }}</option>
-  </select>
-  <div *ngIf="formRegistro.get('rolId')?.touched && formRegistro.get('rolId')?.invalid" class="error">
-    El rol es obligatorio.
-  </div>
-
-  <!-- Contacto (opcional) -->
-  <h3>Contacto (opcional)</h3>
-
-  <label for="telefono">Teléfono:</label>
-  <input id="telefono" type="text" formControlName="telefono" />
-
-  <label for="sitioWeb">Sitio Web:</label>
-  <input id="sitioWeb" type="text" formControlName="sitioWeb" />
-
-  <label for="linkedin">LinkedIn:</label>
-  <input id="linkedin" type="text" formControlName="linkedin" />
-
-  <button type="submit" [disabled]="formRegistro.invalid || cargando">
-    {{ cargando ? 'Registrando...' : 'Registrarse' }}
-  </button>
-</form>
+</div>
