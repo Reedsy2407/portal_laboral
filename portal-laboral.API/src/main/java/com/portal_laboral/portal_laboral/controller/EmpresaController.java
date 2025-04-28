@@ -28,6 +28,11 @@ public class EmpresaController{
         return empresaService.guardar(empresa);
     }
 
+    @GetMapping("/buscarPorNombre/{nombre}")
+    public List<Empresa> buscarEmpresas(@PathVariable String nombre) {
+        return empresaService.buscarPorNombre(nombre);
+    }
+
     @GetMapping("/buscar/{id}")
     public Empresa buscarEmpresa(@PathVariable Integer id){
         return empresaService.buscarPorId(id);

@@ -6,6 +6,7 @@ import { LoginComponent } from './login/login.component';
 import { UsuariosComponent } from './usuarios/usuarios.component';
 import { RegisterComponent } from './register/register.component';
 import { ReclutamientoComponent } from './reclutamiento/reclutamiento.component';
+import { PerfilComponent } from './perfil/perfil.component';
 
 const routes: Routes = [
   {path:'', component: InicioComponent, pathMatch: 'full'},
@@ -14,7 +15,8 @@ const routes: Routes = [
   { path: 'login', component: LoginComponent },
   { path: 'usuarios', component: UsuariosComponent },
   { path: 'register', component: RegisterComponent },
-  { path: 'reclutamiento', component: ReclutamientoComponent}
+  { path: 'reclutamiento', component: ReclutamientoComponent},
+  { path: 'perfil', component:PerfilComponent}
 
 ];
 

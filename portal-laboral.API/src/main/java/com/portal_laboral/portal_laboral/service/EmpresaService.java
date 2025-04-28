@@ -28,4 +28,8 @@ public class EmpresaService {
     public void eliminar(Integer id) {
         repository.deleteById(id);
     }
+
+    public List<Empresa> buscarPorNombre(String nombre) {
+        return repository.findByNombreContainingIgnoreCase(nombre);
+    }
 }

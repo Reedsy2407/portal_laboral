@@ -32,7 +32,7 @@ public class PublicacionController {
 
     @PostMapping("/guardar")
     public Publicacion guardar(@RequestBody Publicacion publicacion) {
-        return publicacionService.guardar(publicacion);
+        return publicacionService.crear(publicacion);
     }
 
     @GetMapping("/buscar/{id}")

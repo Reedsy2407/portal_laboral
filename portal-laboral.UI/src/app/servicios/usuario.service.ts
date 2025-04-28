@@ -15,4 +15,8 @@ export class UsuarioService {
   getUsuarios(): Observable<Usuario[]> {
     return this.http.get<Usuario[]>(`${API.url}${this.request}/listar`);
   }
+
+  buscarPorId(id: number): Observable<Usuario> {
+    return this.http.get<Usuario>(`${API.url}${this.request}/buscar/${id}`);
+  }
 }

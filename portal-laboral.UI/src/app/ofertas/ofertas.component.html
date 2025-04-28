@@ -7,7 +7,7 @@
          class="card shadow-sm p-3 rounded mb-3 cursor-pointer">
 
       <h5 class="fw-bold">{{ oferta.titulo }}</h5>
-      <p class="mb-0 text-muted">{{ oferta.empresa.nombre }}</p>
+      <p class="mb-0 text-muted">{{ oferta.empresa }}</p>
       <small class="text-muted">{{ oferta.lugar }}</small>
       <small class="text-muted d-block">S/. {{ oferta.sueldo | number: '1.2'}}</small>
       <small class="text-muted">Publicado el <b>{{ oferta.fecha | date: 'dd/MM/yyyy' }}</b></small>

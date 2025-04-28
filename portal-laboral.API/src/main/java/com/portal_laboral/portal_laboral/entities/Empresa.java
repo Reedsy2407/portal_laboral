@@ -37,6 +37,10 @@ public class Empresa {
 
     public Empresa() { }
 
+    public Empresa(Integer id) {
+        this.id = id;
+    }
+
     public Integer getId() {
         return id;
     }
@@ -84,4 +88,11 @@ public class Empresa {
         this.contacto = contacto;
     }
 
+    public String getDireccion() {
+        return direccion;
+    }
+
+    public void setDireccion(String direccion) {
+        this.direccion = direccion;
+    }
 }

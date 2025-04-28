@@ -22,6 +22,7 @@ export class RegisterComponent implements OnInit {
   empresas: Empresa[] = [];
   empresasFiltradas: Empresa[] = [];
   mostrarSugerencias = false;
+  empresaId: any;
 
   constructor(
     private fb: FormBuilder,
@@ -94,6 +95,7 @@ export class RegisterComponent implements OnInit {
   }
   
   seleccionarEmpresa(empresa: Empresa) {
+    this.empresaId = empresa.id;
     this.formRegistro.get('empresa')?.setValue(empresa.nombre);
     this.mostrarSugerencias = false;
   }
@@ -107,11 +109,12 @@ export class RegisterComponent implements OnInit {
       this.formRegistro.markAllAsTouched();
       return;
     }
+
   
     this.cargando = true;
   
     const formValue = this.formRegistro.value;
-  
+
     const usuario = {
       nombre: formValue.nombre,
       apellido: formValue.apellido,
@@ -122,9 +125,10 @@ export class RegisterComponent implements OnInit {
         telefono: formValue.telefono,
         sitioWeb: formValue.sitioWeb,
         linkedin: formValue.linkedin
-      }
+      },
+      empresa: { id: this.empresaId } 
     };
-  
+
     this.authService.register(usuario).subscribe({
       next: (respuesta: any) => {
         alert(respuesta);
@@ -155,6 +159,8 @@ export class RegisterComponent implements OnInit {
       contacto: contacto 
     };
   
+
+
     this.empresaService.guardarEmpresa(empresa).subscribe();
   }
   

@@ -29,10 +29,7 @@ public class Publicacion {
     @Column(name = "sueldo_publicacion")
     private double sueldo;
 
-
-    @ManyToOne
-    @JoinColumn(name = "id_modalidad")
-    private Modalidad modalidad;
+    private String modalidad;
 
     @Column(name = "descripcion_publicacion")
     private String descripcion;
@@ -92,11 +89,11 @@ public class Publicacion {
         this.sueldo = sueldo;
     }
 
-    public Modalidad getModalidad() {
+    public String getModalidad() {
         return modalidad;
     }
 
-    public void setModalidad(Modalidad modalidad) {
+    public void setModalidad(String modalidad) {
         this.modalidad = modalidad;
     }
 

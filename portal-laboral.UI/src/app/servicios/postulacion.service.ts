@@ -18,10 +18,11 @@ export class PostulacionService {
   postular(usuarioId: number, publicacionId: number): Observable<any> {
     const body = { usuarioId, publicacionId };
     return this.http.post(`${this.API}/crear`, body, { responseType: 'text' });
-
   }
 
   eliminarPostulacion(usuarioId: number, publicacionId: number): Observable<any> {
     return this.http.delete(`${this.API}/eliminar?usuarioId=${usuarioId}&publicacionId=${publicacionId}`);
   }
+
+  
 }

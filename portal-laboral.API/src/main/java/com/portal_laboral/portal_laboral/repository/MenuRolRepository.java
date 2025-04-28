@@ -9,6 +9,8 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface MenuRolRepository extends JpaRepository<MenuRol, Integer> {
-    @Query("SELECT mr.menu FROM MenuRol mr WHERE mr.rol.id = :idRol")
-    List<Menu> findMenusByRolId(@Param("idRol") Integer idRol);
+    // En tu MenuRolRepository
+    @Query("SELECT mr FROM MenuRol mr WHERE mr.rol.id = :idRol")
+    List<MenuRol> findMenuRolesByRolId(@Param("idRol") Integer idRol);
+
 }

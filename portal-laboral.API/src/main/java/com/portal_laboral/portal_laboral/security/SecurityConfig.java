@@ -35,18 +35,17 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http
-                .cors(cors -> {})
+                .cors(cors -> cors.configurationSource(corsConfigurationSource())) // aplicar tu cors
                 .csrf(csrf -> csrf.disable())
-                .cors(cors->{})
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/**", "/rol/listar", "/empresa/guardar", "/empresa/listar").permitAll()
-                        .anyRequest().authenticated()
+                        .anyRequest().permitAll() // permitir TODO
                 )
                 .authenticationProvider(daoAuthenticationProvider())
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
+
 
     @Bean
     public DaoAuthenticationProvider daoAuthenticationProvider() {
@@ -68,16 +67,16 @@ public class SecurityConfig {
 
     // Configuración de CORS
     @Bean
-    public CorsFilter corsFilter() {
+    public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration corsConfig = new CorsConfiguration();
-        corsConfig.addAllowedOrigin("http://localhost:4200"); // Permitir origen de tu frontend
-        corsConfig.addAllowedMethod("*");  // Permitir todos los métodos (GET, POST, etc.)
-        corsConfig.addAllowedHeader("*");  // Permitir todos los encabezados
-        corsConfig.setAllowCredentials(true);  // Permite credenciales (cookies)
+        corsConfig.setAllowedOrigins(List.of("http://localhost:4200"));
+        corsConfig.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        corsConfig.setAllowedHeaders(List.of("*"));
+        corsConfig.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", corsConfig);  // Configurar todas las rutas para permitir CORS
-        return new CorsFilter(source);
+        source.registerCorsConfiguration("/**", corsConfig);
+        return source;
     }
 
 

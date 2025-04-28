@@ -40,7 +40,6 @@ export class OfertasComponent implements OnInit {
 
     this.postulacionService.postular(usuarioId, oferta.idPublicacion).subscribe(() => {
       this.idsPostulaciones.push(oferta.idPublicacion);
-      alert(`¡Postulación enviada a: ${oferta.titulo}!`);
     });
   }
 

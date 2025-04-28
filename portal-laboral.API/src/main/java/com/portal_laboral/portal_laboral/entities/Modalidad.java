@@ -20,6 +20,7 @@ public class Modalidad {
 
     public Modalidad() {}
 
+
     public Integer getId() {
         return id;
     }

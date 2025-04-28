@@ -15,5 +15,7 @@ export class PublicacionService {
     return this.http.get<Publicacion[]>(`${API.url + this.request}/listar`)
   }
 
-  
+  crearPublicacion(publicacion: Publicacion): Observable<Publicacion>{
+    return this.http.post<Publicacion>(`${API.url + this.request}/guardar`, publicacion);
+  }
 }

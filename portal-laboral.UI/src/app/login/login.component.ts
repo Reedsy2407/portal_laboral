@@ -34,13 +34,12 @@ export class LoginComponent implements OnInit {
   
   enviarLogin() {
   this.mensajeError = '';
-
-  if (this.formLogin.invalid) return;
-
   const datosLogin: LoginRequest = this.formLogin.value;
 
   this.authService.login(datosLogin).subscribe({
     next: (response: any) => {
+      console.log('Respuesta del servidor:', response);
+
       let rolUsuario = response.rol?.nombre?.toLowerCase();
       const idRol = response.rol?.id;
 

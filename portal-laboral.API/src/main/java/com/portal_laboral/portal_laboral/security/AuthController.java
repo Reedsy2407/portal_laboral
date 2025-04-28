@@ -1,7 +1,9 @@
 package com.portal_laboral.portal_laboral.security;
 
+import com.portal_laboral.portal_laboral.entities.Empresa;
 import com.portal_laboral.portal_laboral.entities.Rol;
 import com.portal_laboral.portal_laboral.entities.Usuario;
+import com.portal_laboral.portal_laboral.repository.EmpresaRepository;
 import com.portal_laboral.portal_laboral.repository.RolRepository;
 import com.portal_laboral.portal_laboral.repository.UsuarioRepository;
 import com.portal_laboral.portal_laboral.security.payload.LoginRequest;
@@ -34,6 +36,9 @@ public class AuthController {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private EmpresaRepository empresaRepository;
+
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequest request) {
         Authentication auth = authManager.authenticate(
@@ -58,6 +63,13 @@ public class AuthController {
         }
 
         usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
+
+        if (usuario.getEmpresa() != null && usuario.getEmpresa().getId() != null) {
+            Empresa empresa = empresaRepository.findById(usuario.getEmpresa().getId())
+                    .orElse(null);
+            usuario.setEmpresa(empresa);
+        }
+
         usuarioRepository.save(usuario);
         return ResponseEntity.ok("Usuario registrado con éxito");
     }

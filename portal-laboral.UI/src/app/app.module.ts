@@ -14,6 +14,7 @@ import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 
 import { JwtInterceptor } from './interceptors/jwt.interceptor';
 import { ReclutamientoComponent } from './reclutamiento/reclutamiento.component';
+import { PerfilComponent } from './perfil/perfil.component';
 
 @NgModule({
   declarations: [
@@ -25,7 +26,8 @@ import { ReclutamientoComponent } from './reclutamiento/reclutamiento.component'
     LoginComponent,
     UsuariosComponent,
     RegisterComponent,
-    ReclutamientoComponent  
+    ReclutamientoComponent,
+    PerfilComponent  
   ],
   imports: [
     BrowserModule,

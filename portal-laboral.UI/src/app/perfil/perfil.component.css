@@ -1,0 +1,122 @@
+.profile-container {
+    max-width: 800px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+  
+  .profile-header {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+  
+  .profile-avatar {
+    width: 100px;
+    height: 100px;
+    margin: 0 auto 1rem;
+    background-color: #3f51b5;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 2rem;
+    font-weight: bold;
+  }
+  
+  .profile-details {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+  }
+  
+  .detail-card {
+    padding: 1.5rem;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  }
+  
+  .detail-card h2 {
+    margin-top: 0;
+    color: #3f51b5;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 0.5rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .detail-row {
+    display: flex;
+    margin-bottom: 1rem;
+  }
+  
+  .detail-label {
+    font-weight: 600;
+    color: #555;
+    min-width: 150px;
+  }
+  
+  .detail-value {
+    color: #333;
+  }
+  
+  .profile-actions {
+    margin-top: 2rem;
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+  }
+  
+  .edit-button, .change-password-button {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+  }
+  
+  .edit-button {
+    background-color: #3f51b5;
+    color: white;
+  }
+  
+  .change-password-button {
+    background-color: #f0f0f0;
+    color: #333;
+  }
+  
+  .edit-button:hover {
+    background-color: #303f9f;
+  }
+  
+  .change-password-button:hover {
+    background-color: #e0e0e0;
+  }
+
+  /* Estilos adicionales para personalizar */
+.card {
+    border: none;
+    border-radius: 10px;
+  }
+  
+  .card-header {
+    border-radius: 10px 10px 0 0 !important;
+  }
+  
+  /* Animación suave para las tarjetas */
+  .card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Para el avatar circular */
+  .initials-avatar {
+    font-weight: bold;
+  }

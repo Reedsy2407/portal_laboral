@@ -1,7 +1,9 @@
 package com.portal_laboral.portal_laboral.repository;
 
 import java.util.List;
+import java.util.Optional;
 
+import com.portal_laboral.portal_laboral.entities.Modalidad;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.query.Procedure;
 import org.springframework.data.repository.query.Param;

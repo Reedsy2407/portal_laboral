@@ -20,4 +20,8 @@ export class EmpresaService {
   listarEmpresa(): Observable<Empresa[]>{
     return this.http.get<Empresa[]>(`${API.url + this.request}/listar`);
   }
+
+  buscarPorNombre(nombre: string): Observable<Empresa[]> {
+    return this.http.get<Empresa[]>(`${API.url + this.request}/buscarPorNombre/${nombre}`);
+  } 
 }
