@@ -18,4 +18,12 @@ export class PublicacionService {
   crearPublicacion(publicacion: Publicacion): Observable<Publicacion>{
     return this.http.post<Publicacion>(`${API.url + this.request}/guardar`, publicacion);
   }
+
+  getPublicacionesPorEmpresa(idEmpresa: number): Observable<Publicacion[]> {
+    return this.http.get<Publicacion[]>(`${API.url + this.request}/buscarPorEmpresa/${idEmpresa}`);
+  }
+
+  eliminarPublicacion(idPublicacion: number): Observable<any> {
+    return this.http.delete(`${API.url + this.request}/eliminarPublicacion/${idPublicacion}`);
+  }
 }

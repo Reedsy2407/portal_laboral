@@ -36,19 +36,21 @@ public class Publicacion {
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
     @Column(name = "fecha_publicacion")
-
-
     private LocalDateTime fecha = LocalDateTime.now();
 
+    @Column(name = "estado_publicacion")
+    private String estado = "creado";
 
     public Publicacion(Integer id) {
         this.idPublicacion = id;
 
     }
 
+    
     public Publicacion() {
 
     }
+    
     public Integer getIdPublicacion() {
         return idPublicacion;
     }
@@ -111,5 +113,15 @@ public class Publicacion {
 
     public void setFecha(LocalDateTime fecha) {
         this.fecha = fecha;
+    }
+
+
+    public String getEstado() {
+        return estado;
+    }
+
+
+    public void setEstado(String estado) {
+        this.estado = estado;
     }
 }

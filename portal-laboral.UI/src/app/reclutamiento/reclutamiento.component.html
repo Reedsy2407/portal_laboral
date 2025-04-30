@@ -1,51 +1,88 @@
+<ul class="nav">
+  <li class="nav-item">
+    <a class="nav-link active" aria-current="page" (click)="cambiarEstado(true)">Mis avisos</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" (click)="cambiarEstado(false)">Publicar un aviso</a>
+  </li>
+</ul>
 
-    <ul class="nav">
-        <li class="nav-item">
-          <a class="nav-link active" aria-current="page" (click)="cambiarEstado(true)">Mis avisos</a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" (click)="cambiarEstado(false)">Publicar un aviso</a>
-        </li>
-      </ul>
-      
-      <div *ngIf="show">
-        SE MUESTRA UNA OPCION
-      </div>
-
-  <div *ngIf="!show">
-    <h2>Publicar un aviso</h2>
-    <form [formGroup]="formAviso" (submit)="crear()">
-      <div class="form-group">
-        <label for="titulo">Título</label>
-        <input id="titulo" type="text" formControlName="titulo" class="form-control" placeholder="Ingresa el título">
-      </div>
-  
-      <div class="form-group">
-        <label for="publicacion">Publicación</label>
-        <textarea id="publicacion" formControlName="publicacion" class="form-control" placeholder="Describe el aviso"></textarea>
-      </div>
-  
-      <div class="form-group">
-        <label for="lugar">Lugar</label>
-        <input id="lugar" type="text" formControlName="lugar" class="form-control" placeholder="Lugar del trabajo">
-      </div>
-  
-      <div class="form-group">
-        <label for="sueldo">Sueldo</label>
-        <input id="sueldo" type="number" formControlName="sueldo" class="form-control" placeholder="Sueldo ofrecido">
-      </div>
-  
-      <div class="form-group">
-        <label for="modalidad">Modalidad</label>
-        <select id="modalidad" formControlName="modalidad" class="form-control">
-          <option value="">Selecciona la modalidad</option>
-          <option value="Presencial">Presencial</option>
-          <option value="Remoto">Remoto</option>
-          <option value="Híbrido">Híbrido</option>
-        </select>
-      </div>
-  
-      <button type="submit" class="btn btn-primary mt-3" [disabled]="formAviso.invalid">Publicar</button>
-    </form>
+<div *ngIf="show">
+  <h2>Mis Publicaciones</h2>
+  <div *ngIf="publicaciones.length === 0" class="alert alert-info">
+    No tienes publicaciones aún.
   </div>
 
+  <div *ngFor="let publicacion of publicaciones" class="card mb-3">
+    <div class="card-body">
+      <h5 class="card-title">{{ publicacion.titulo }}</h5>
+      <p class="card-text">{{ publicacion.descripcion }}</p>
+      <ul class="list-group list-group-flush">
+        <li class="list-group-item"><strong>Lugar:</strong> {{ publicacion.lugar }}</li>
+        <li class="list-group-item"><strong>Sueldo:</strong> ${{ publicacion.sueldo | number }}</li>
+        <li class="list-group-item"><strong>Modalidad:</strong> {{ publicacion.modalidad }}</li>
+        <li class="list-group-item">
+          <strong>Fecha:</strong> {{ publicacion.fecha | date:'medium' }}
+        </li>
+      </ul>
+      <button class="btn btn-danger mt-2"
+        (click)="publicacion.idPublicacion !== undefined && eliminarPublicacion(publicacion.idPublicacion)">
+        Eliminar
+      </button>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="!show">
+  <h2>Publicar un aviso</h2>
+  <form [formGroup]="formAviso" (submit)="crear()">
+    <div class="form-group">
+      <label for="titulo">Título</label>
+      <input id="titulo" type="text" formControlName="titulo" class="form-control" placeholder="Ingresa el título">
+      <div *ngIf="formAviso.get('titulo')?.invalid && formAviso.get('titulo')?.touched" class="text-danger">
+        El título es requerido
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="publicacion">Publicación</label>
+      <textarea id="publicacion" formControlName="publicacion" class="form-control"
+        placeholder="Describe el aviso"></textarea>
+      <div *ngIf="formAviso.get('publicacion')?.invalid && formAviso.get('publicacion')?.touched" class="text-danger">
+        La descripción es requerida
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="lugar">Lugar</label>
+      <input id="lugar" type="text" formControlName="lugar" class="form-control" placeholder="Lugar del trabajo">
+      <div *ngIf="formAviso.get('lugar')?.invalid && formAviso.get('lugar')?.touched" class="text-danger">
+        El lugar es requerido
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="sueldo">Sueldo</label>
+      <input id="sueldo" type="number" formControlName="sueldo" class="form-control" placeholder="Sueldo ofrecido"
+        min="0">
+      <div *ngIf="formAviso.get('sueldo')?.invalid && formAviso.get('sueldo')?.touched" class="text-danger">
+        Ingrese un sueldo válido
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="modalidad">Modalidad</label>
+      <select id="modalidad" formControlName="modalidad" class="form-control">
+        <option value="">Selecciona la modalidad</option>
+        <option value="Presencial">Presencial</option>
+        <option value="Remoto">Remoto</option>
+        <option value="Híbrido">Híbrido</option>
+      </select>
+      <div *ngIf="formAviso.get('modalidad')?.invalid && formAviso.get('modalidad')?.touched" class="text-danger">
+        Seleccione una modalidad
+      </div>
+    </div>
+
+    <button type="submit" class="btn btn-primary mt-3" [disabled]="formAviso.invalid">Publicar</button>
+  </form>
+</div>

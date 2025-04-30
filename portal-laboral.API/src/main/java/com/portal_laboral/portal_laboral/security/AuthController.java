@@ -53,7 +53,9 @@ public class AuthController {
 
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody Usuario usuario) {
+public ResponseEntity<?> register(@RequestBody Usuario usuario) {
+    try {
+        // Validaciones básicas
         if (usuarioRepository.findByCorreo(usuario.getCorreo()).isPresent()) {
             return ResponseEntity.badRequest().body("El correo ya está registrado");
         }
@@ -64,15 +66,28 @@ public class AuthController {
 
         usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
 
-        if (usuario.getEmpresa() != null && usuario.getEmpresa().getId() != null) {
-            Empresa empresa = empresaRepository.findById(usuario.getEmpresa().getId())
-                    .orElse(null);
-            usuario.setEmpresa(empresa);
+        if (usuario.getRol().getId() == 3) { 
+            if (usuario.getEmpresa() == null) {
+                return ResponseEntity.badRequest().body("Los empleadores deben tener una empresa asociada");
+            }
+            
+            if (usuario.getEmpresa().getId() != null) {
+                Empresa empresaExistente = empresaRepository.findById(usuario.getEmpresa().getId())
+                    .orElseThrow(() -> new RuntimeException("Empresa no encontrada"));
+                usuario.setEmpresa(empresaExistente);
+            } else {
+                empresaRepository.save(usuario.getEmpresa());
+            }
+        } else {
+            usuario.setEmpresa(null);
         }
 
         usuarioRepository.save(usuario);
         return ResponseEntity.ok("Usuario registrado con éxito");
+    } catch (Exception e) {
+        return ResponseEntity.internalServerError().body("Error al registrar usuario: " + e.getMessage());
     }
+}
 
 
 }

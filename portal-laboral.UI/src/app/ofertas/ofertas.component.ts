@@ -38,15 +38,15 @@ export class OfertasComponent implements OnInit {
     const usuarioId = this.authService.obtenerUsuarioId();
     if (usuarioId === null) return;
 
-    this.postulacionService.postular(usuarioId, oferta.idPublicacion).subscribe(() => {
-      this.idsPostulaciones.push(oferta.idPublicacion);
+    this.postulacionService.postular(usuarioId, oferta.idPublicacion!).subscribe(() => {
+      this.idsPostulaciones.push(oferta.idPublicacion!);
     });
   }
 
   despostular(oferta: Publicacion): void {
     const usuarioId = this.authService.obtenerUsuarioId();
     if (usuarioId === null) return;
-    this.postulacionService.eliminarPostulacion(usuarioId, oferta.idPublicacion).subscribe(() => {
+    this.postulacionService.eliminarPostulacion(usuarioId, oferta.idPublicacion!).subscribe(() => {
       this.idsPostulaciones = this.idsPostulaciones.filter(id => id !== oferta.idPublicacion);
     });
   }

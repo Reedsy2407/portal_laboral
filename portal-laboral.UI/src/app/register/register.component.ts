@@ -126,7 +126,7 @@ export class RegisterComponent implements OnInit {
         sitioWeb: formValue.sitioWeb,
         linkedin: formValue.linkedin
       },
-      empresa: { id: this.empresaId } 
+      empresa: { id: this.empresaId || null} 
     };
 
     this.authService.register(usuario).subscribe({

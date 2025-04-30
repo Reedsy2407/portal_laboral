@@ -14,7 +14,7 @@ export class MenuService {
 
   constructor(private http: HttpClient) { }
 
-  listarMenuPorRol(idRol: number): Observable<Menu[]> {
-    return this.http.get<Menu[]>(`${API.url + this.request}/listarMenu/${idRol}`);
-  }
+  listarMenuPorUsuario(idUsuario: number) {
+    return this.http.get<Menu[]>(`${API.url + this.request}/listarMenu/${idUsuario}`);
+}
 }

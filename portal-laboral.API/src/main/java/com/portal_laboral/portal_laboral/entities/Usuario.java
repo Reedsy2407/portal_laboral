@@ -36,10 +36,14 @@ public class Usuario {
     @JoinColumn(name = "id_empresa", nullable = true)
     private Empresa empresa;
 
+    @Embedded
+    private Contacto contacto;
+
     public Usuario() { }
 
     public Usuario (Integer usuarioId) { }
 
+    
 
     public Rol getRol() {
         return rol;
@@ -103,5 +107,13 @@ public class Usuario {
 
     public void setEmpresa(Empresa empresa) {
         this.empresa = empresa;
+    }
+
+    public Contacto getContacto() {
+        return contacto;
+    }
+
+    public void setContacto(Contacto contacto) {
+        this.contacto = contacto;
     }
 }

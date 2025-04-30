@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import com.portal_laboral.portal_laboral.entities.Modalidad;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.query.Procedure;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -27,4 +28,7 @@ public interface PublicacionRepository extends JpaRepository<Publicacion, Intege
     @Param("p_idTipoContrato") Integer idTipoContrato,
      @Param("p_idTipoJornada") Integer idTipoJornada
     );
+
+@Query("SELECT p FROM Publicacion p WHERE p.empresa.id = :empresaId")
+List<Publicacion> findByEmpresaId(@Param("empresaId") Integer empresaId);
 }

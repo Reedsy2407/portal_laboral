@@ -9,12 +9,14 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.portal_laboral.portal_laboral.entities.Publicacion;
+import com.portal_laboral.portal_laboral.repository.PublicacionRepository;
 import com.portal_laboral.portal_laboral.service.PublicacionService;
 
 @RestController
@@ -24,6 +26,9 @@ import com.portal_laboral.portal_laboral.service.PublicacionService;
 public class PublicacionController {
     @Autowired
     private PublicacionService publicacionService;
+
+    @Autowired
+    private PublicacionRepository publicacionRepository;
 
     @GetMapping("/listar")
     public List<Publicacion> listar() {
@@ -40,10 +45,19 @@ public class PublicacionController {
         return publicacionService.buscarPorId(id);
     }
 
-    @DeleteMapping("/eliminarPublicacion/{id}")
+    @PutMapping("/eliminarPublicacion/{id}")
     public ResponseEntity<String> eliminar(@PathVariable Integer id) {
-        publicacionService.eliminar(id);
-        return ResponseEntity.ok("Publicacion eliminada");
+        Publicacion publicacion = publicacionService.buscarPorId(id);
+    
+    publicacion.setEstado("eliminado");
+    publicacionService.crear(publicacion);
+    return ResponseEntity.ok("Publicación marcada como eliminada");
+    }
+
+    @GetMapping("/buscarPorEmpresa/{idEmpresa}")
+    public ResponseEntity<List<Publicacion>> getPublicacionesPorEmpresa(@PathVariable Integer idEmpresa) {
+        List<Publicacion> publicaciones = publicacionRepository.findByEmpresaId(idEmpresa);
+        return ResponseEntity.ok(publicaciones);
     }
 
 }

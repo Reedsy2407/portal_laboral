@@ -1,3 +1,4 @@
+// nav-bar.component.ts
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../servicios/auth.service';
 import { MenuService } from '../servicios/menu.service';
@@ -22,17 +23,20 @@ export class NavBarComponent implements OnInit {
     private router: Router
   ) {
     const token = localStorage.getItem('token');
-    this.estaLogueado = !!token
+    this.estaLogueado = !!token;
   }
 
   ngOnInit(): void {
     this.estaLogueado = this.authService.estaLogueado();
   
     if (this.estaLogueado) {
-      const idRol = this.authService.getIdRol();
-      if (idRol) {
-        this.menuService.listarMenuPorRol(idRol).subscribe({
+      const idUsuario = this.authService.obtenerUsuarioId(); // Cambiamos a obtener ID de usuario
+      console.log('ID de Usuario obtenido:', idUsuario);
+
+      if (idUsuario) {
+        this.menuService.listarMenuPorUsuario(idUsuario).subscribe({
           next: (data) => {
+            console.log('Menús recibidos:', data);
             this.menus = data.filter(menu => menu.nombre.toLowerCase() !== 'login');
           },
           error: (err) => {
@@ -45,7 +49,7 @@ export class NavBarComponent implements OnInit {
   
   logout() {
     this.authService.logout();
-    this.router.navigate(['/login'])
+    this.router.navigate(['/login']);
   }
 
   switch_to_second(): void {

@@ -2,7 +2,7 @@
 import { Modalidad } from "./Modalidad";
 
 export interface Publicacion{
-    idPublicacion: number
+    idPublicacion?: number
     empresa: number
     titulo: string
     lugar: string
@@ -12,4 +12,5 @@ export interface Publicacion{
     }
     descripcion: string
     fecha?: Date
+    estado?: string
 }

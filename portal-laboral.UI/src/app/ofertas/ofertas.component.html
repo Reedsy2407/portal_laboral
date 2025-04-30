@@ -22,9 +22,9 @@
   
       <button 
   class="btn w-100"
-  [ngClass]="estaPostulado(ofertaSeleccionada.idPublicacion) ? 'btn-success' : 'btn-outline-primary'"
-  (click)="estaPostulado(ofertaSeleccionada.idPublicacion) ? despostular(ofertaSeleccionada) : postular(ofertaSeleccionada)">
-  {{ estaPostulado(ofertaSeleccionada.idPublicacion) ? 'Ya estás postulado (Despostularse)' : 'Postular' }}
+  [ngClass]="estaPostulado(ofertaSeleccionada.idPublicacion!) ? 'btn-success' : 'btn-outline-primary'"
+  (click)="estaPostulado(ofertaSeleccionada.idPublicacion!) ? despostular(ofertaSeleccionada) : postular(ofertaSeleccionada)">
+  {{ estaPostulado(ofertaSeleccionada.idPublicacion!) ? 'Ya estás postulado (Despostularse)' : 'Postular' }}
 </button>
   
     </div>
