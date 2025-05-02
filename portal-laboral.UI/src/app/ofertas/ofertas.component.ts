@@ -14,7 +14,9 @@ import { EstadoPostulacion, Postulacion } from '../entidades/postulacion';
 export class OfertasComponent implements OnInit {
   listaOfertas: Publicacion[] = [];
   ofertaSeleccionada?: Publicacion;
-  postulacionesUsuario: Postulacion[] = []; // Ahora almacenamos objetos completos
+  postulacionesUsuario: Postulacion[] = [];
+  isLoading = true;
+  errorMessage = '';
 
   constructor(
     private publicacionService: PublicacionService,
@@ -23,24 +25,69 @@ export class OfertasComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.cargarDatos();
+  }
+
+  cargarDatos(): void {
     this.cargarOfertas();
-    this.cargarPostulaciones();
   }
 
   cargarOfertas(): void {
-    this.publicacionService.getPublicaciones().subscribe(data => {
-      this.listaOfertas = data;
+    this.publicacionService.getPublicaciones().subscribe({
+      next: (data) => {
+        this.listaOfertas = data;
+        this.cargarPostulaciones();
+      },
+      error: (err) => {
+        console.error('Error al cargar ofertas:', err);
+        this.isLoading = false;
+        this.errorMessage = 'Error al cargar las ofertas';
+      }
     });
   }
 
   cargarPostulaciones(): void {
     const usuarioId = this.authService.obtenerUsuarioId(); 
-    if (usuarioId === null) return;
+    if (!usuarioId) {
+      this.isLoading = false;
+      return;
+    }
     
-    this.postulacionService.obtenerPostulacionesDelUsuario(usuarioId).subscribe(postulaciones => {
-      this.postulacionesUsuario = postulaciones;
+    this.postulacionService.obtenerPostulacionesDelUsuario(usuarioId).subscribe({
+      next: (postulaciones) => {
+        this.postulacionesUsuario = postulaciones.map(p => ({
+          ...p,
+          estado: p.estado || 'POSTULADO'
+        }));
+        this.isLoading = false;
+      },
+      error: (err) => {
+        console.error('Error al cargar postulaciones:', err);
+        this.isLoading = false;
+        this.errorMessage = 'Error al cargar tus postulaciones';
+      }
     });
   }
+
+
+
+  getBadgeClass(estado?: EstadoPostulacion | string): string {
+    if (!estado) return 'bg-light text-dark';
+    
+    // Convert to string if it's an enum value
+    const estadoStr = typeof estado === 'string' ? estado : EstadoPostulacion[estado];
+    
+    switch (estadoStr) {
+      case 'POSTULADO': return 'bg-primary';
+      case 'EN_REVISION': return 'bg-info';
+      case 'SELECCIONADO': return 'bg-success';
+      case 'DESCARTADO': return 'bg-danger';
+      case 'FINALIZADO': return 'bg-secondary';
+      default: return 'bg-light text-dark';
+    }
+  }
+
+  
 
   seleccionarOferta(oferta: Publicacion): void {
     this.ofertaSeleccionada = oferta;
@@ -80,22 +127,13 @@ export class OfertasComponent implements OnInit {
   }
 
   estaPostulado(id: number): boolean {
-    return this.postulacionesUsuario.some(p => p.publicacion === id);
+    return this.postulacionesUsuario.some(p => 
+      p.publicacion === id && p.estado !== 'DESCARTADO'
+    );
   }
 
   getPostulacion(idPublicacion: number): Postulacion | undefined {
     return this.postulacionesUsuario.find(p => p.publicacion === idPublicacion);
-  }
-
-  getBadgeClass(estado?: string): string {
-    switch (estado) {
-      case 'POSTULADO': return 'bg-primary';
-      case 'EN_REVISION': return 'bg-info';
-      case 'SELECCIONADO': return 'bg-success';
-      case 'DESCARTADO': return 'bg-danger';
-      case 'FINALIZADO': return 'bg-secondary';
-      default: return 'bg-light text-dark';
-    }
   }
 
   getPostulacionesPorPublicacion(id: number): void {
@@ -120,4 +158,18 @@ export class OfertasComponent implements OnInit {
       error: (error) => console.error('Error al obtener postulaciones:', error)
     });
   }
+
+  actualizarEstadoPostulacion(idPublicacion: number, nuevoEstado: string): void {
+    const index = this.postulacionesUsuario.findIndex(p => p.publicacion === idPublicacion);
+    if (index !== -1) {
+      // Convierte el string al enum correspondiente
+      this.postulacionesUsuario[index].estado = this.convertirStringAEstado(nuevoEstado);
+    }
+  }
+
+private convertirStringAEstado(estadoString: string): EstadoPostulacion {
+  // Convierte el string al enum de manera segura
+  const estado = EstadoPostulacion[estadoString as keyof typeof EstadoPostulacion];
+  return estado || EstadoPostulacion.POSTULADO; // Valor por defecto si la conversión falla
+}
 }

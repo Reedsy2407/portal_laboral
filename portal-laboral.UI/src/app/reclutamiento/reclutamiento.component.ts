@@ -6,6 +6,8 @@ import { UsuarioService } from '../servicios/usuario.service';
 import { EmpresaService } from '../servicios/empresa.service';
 import { AuthService } from '../servicios/auth.service';
 import { Usuario } from '../entidades/Usuario';
+import { PostulacionService } from '../servicios/postulacion.service';
+declare var bootstrap: any; 
 
 @Component({
   selector: 'app-reclutamiento',
@@ -19,11 +21,14 @@ export class ReclutamientoComponent implements OnInit{
   publicaciones: Publicacion[] = [];
   idEmpresa: number = 0;
   usuarioCoincidente!: Usuario;
+  publicacionSeleccionada: any;
+  postulantes: any[] = [];
   constructor(
     private fb: FormBuilder,
     private publicacionService: PublicacionService,
     private usuarioService: UsuarioService,
-    private authService: AuthService
+    private authService: AuthService,
+    private postulacionService: PostulacionService
   ) {
     this.formAviso = this.fb.group({
       titulo: ['', Validators.required],
@@ -70,6 +75,24 @@ export class ReclutamientoComponent implements OnInit{
       });
   }
 
+  verPostulantes(publicacionId: number, publicacion: any) {
+    this.publicacionSeleccionada = publicacion;
+    this.postulacionService.obtenerPostulacionPorPublicacionId(publicacionId).subscribe({
+      next: (data) => {
+        console.log('Datos transformados:', data); // Para verificar
+        this.postulantes = data;
+        const modalElement = document.getElementById('postulantesModal');
+        if (modalElement) {
+          const modal = new bootstrap.Modal(modalElement);
+          modal.show();
+        }
+      },
+      error: (err) => {
+        console.error('Error al obtener postulantes:', err);
+      }
+    });
+  }
+
   crear(): void {
     if (this.formAviso.valid && this.idEmpresa) {
       const nuevaPublicacion: Publicacion = {
@@ -110,4 +133,35 @@ export class ReclutamientoComponent implements OnInit{
         );
     }
   }
+
+  // En tu componente
+cambiarEstadoPostulacion(idPostulacion: number, nuevoEstado: string) {
+  this.postulacionService.cambiarEstadoPostulacion(idPostulacion, nuevoEstado).subscribe({
+    next: () => {
+      // Actualizar el estado localmente
+      const postulacion = this.postulantes.find(p => p.id === idPostulacion);
+      if (postulacion) {
+        postulacion.estado = nuevoEstado;
+      }
+      
+      // Mostrar notificación (opcional)
+      const mensaje = nuevoEstado === 'DESCARTADO' 
+        ? 'Postulante descartado' 
+        : 'Estado actualizado correctamente';
+      alert(mensaje); // Puedes reemplazar esto con un toast de Angular
+    },
+    error: (err) => {
+      console.error('Error al cambiar estado:', err);
+      alert('Error al actualizar el estado');
+    }
+  });
+}
+
+getSiguienteEstado(estadoActual: string): string {
+  switch(estadoActual) {
+    case 'POSTULADO': return 'SELECCIONADO';
+    case 'SELECCIONADO': return 'FINALIZADO';
+    default: return estadoActual;
+  }
+}
 }

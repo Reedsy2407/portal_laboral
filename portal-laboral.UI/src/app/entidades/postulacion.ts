@@ -3,7 +3,7 @@ import { Usuario } from "./Usuario";
 
 export interface Postulacion {
     id: number;
-    estado: EstadoPostulacion;
+    estado: string;
     fechaPostulacion: string; // Usamos string porque se serializa desde JSON
     usuario: number;
     publicacion: number;

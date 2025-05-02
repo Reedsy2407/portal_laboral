@@ -30,22 +30,29 @@
       <!-- Detalles de postulación -->
       <div *ngIf="estaPostulado(ofertaSeleccionada.idPublicacion!)" class="mb-3 p-3 bg-light rounded">
         <h6 class="fw-bold">Tu postulación:</h6>
-        <div class="d-flex align-items-center mb-2">
-          <span class="badge me-2" [ngClass]="getBadgeClass(getPostulacion(ofertaSeleccionada.idPublicacion!)?.estado)">
+        <div class="mt-2">
+          <span class="badge" [ngClass]="getBadgeClass(getPostulacion(ofertaSeleccionada.idPublicacion!)?.estado)">
             {{ getPostulacion(ofertaSeleccionada.idPublicacion!)?.estado || 'POSTULADO' }}
           </span>
-          <small class="text-muted">
+          <small class="text-muted ms-2">
             Postulado el {{ getPostulacion(ofertaSeleccionada.idPublicacion!)?.fechaPostulacion | date:'dd/MM/yyyy' }}
           </small>
         </div>
       </div>
   
       <button 
-        class="btn w-100"
-        [ngClass]="estaPostulado(ofertaSeleccionada.idPublicacion!) ? 'btn-success' : 'btn-outline-primary'"
-        (click)="estaPostulado(ofertaSeleccionada.idPublicacion!) ? despostular(ofertaSeleccionada) : postular(ofertaSeleccionada)">
-        {{ estaPostulado(ofertaSeleccionada.idPublicacion!) ? 'Ya estás postulado (Despostularse)' : 'Postular' }}
-      </button>
+  class="btn w-100"
+  [ngClass]="{
+    'btn-success': estaPostulado(ofertaSeleccionada.idPublicacion!),
+    'btn-outline-primary': !estaPostulado(ofertaSeleccionada.idPublicacion!)
+  }"
+  (click)="estaPostulado(ofertaSeleccionada.idPublicacion!) ? 
+           despostular(ofertaSeleccionada) : 
+           postular(ofertaSeleccionada)">
+  {{ estaPostulado(ofertaSeleccionada.idPublicacion!) ? 
+     'Quitar postulación' : 
+     'Postular' }}
+</button>
     </div>
   </div>
 </div>

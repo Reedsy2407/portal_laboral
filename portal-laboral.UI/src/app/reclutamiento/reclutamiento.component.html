@@ -25,6 +25,10 @@
           <strong>Fecha:</strong> {{ publicacion.fecha | date:'medium' }}
         </li>
       </ul>
+      <button class="btn btn-primary mt-2 ms-2"
+  (click)="verPostulantes(publicacion.idPublicacion!, publicacion)">
+  Ver postulantes
+</button>
       <button class="btn btn-danger mt-2"
         (click)="publicacion.idPublicacion !== undefined && eliminarPublicacion(publicacion.idPublicacion)">
         Eliminar
@@ -85,4 +89,58 @@
 
     <button type="submit" class="btn btn-primary mt-3" [disabled]="formAviso.invalid">Publicar</button>
   </form>
+</div>
+
+<!-- Modal para postulantes (añade esto al final de tu template) -->
+<div class="modal fade" id="postulantesModal" tabindex="-1" aria-labelledby="postulantesModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <!-- ... (encabezado del modal igual) ... -->
+      <div class="modal-body">
+        <div *ngIf="postulantes.length === 0" class="alert alert-info">
+          No hay postulantes para esta oferta.
+        </div>
+        
+        <div *ngFor="let postulante of postulantes" class="card mb-3">
+          <div class="card-body">
+            <h5 class="card-title">{{postulante.usuario?.nombre}} {{postulante.usuario?.apellido}}</h5>
+            <p class="card-text"><strong>Email:</strong> {{postulante.usuario?.email}}</p>
+            <p class="card-text"><strong>Teléfono:</strong> {{postulante.usuario?.telefono || 'No especificado'}}</p>
+            <p class="card-text"><strong>Fecha de postulación:</strong> {{postulante.fecha | date:'medium'}}</p>
+            <p class="card-text"><strong>Estado:</strong> {{postulante.estado}}</p>
+          </div>
+          <!-- Mover los botones DENTRO de cada card-body -->
+          <div class="card-footer bg-light">
+            <!-- Cambiar "postulacion" por "postulante" -->
+            <button *ngIf="postulante.estado !== 'DESCARTADO' && postulante.estado !== 'FINALIZADO'" 
+                    class="btn btn-sm btn-success me-2"
+                    (click)="cambiarEstadoPostulacion(postulante.id, getSiguienteEstado(postulante.estado))">
+              Siguiente fase
+            </button>
+          
+            <button *ngIf="postulante.estado !== 'DESCARTADO'"
+                    class="btn btn-sm btn-danger me-2"
+                    (click)="cambiarEstadoPostulacion(postulante.id, 'DESCARTADO')">
+              Descartar postulante
+            </button>
+          
+            <button class="btn btn-sm btn-primary" disabled>
+              Descargar CV
+            </button>
+          
+            <span *ngIf="postulante.estado === 'DESCARTADO'" class="badge bg-danger">
+              Descartado
+            </span>
+            
+            <span *ngIf="postulante.estado === 'FINALIZADO'" class="badge bg-success">
+              Proceso finalizado
+            </span>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
 </div>

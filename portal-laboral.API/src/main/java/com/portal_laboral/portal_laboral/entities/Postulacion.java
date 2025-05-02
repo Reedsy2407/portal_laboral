@@ -16,7 +16,6 @@ public class Postulacion {
 
     public enum EstadoPostulacion {
         POSTULADO,
-        EN_REVISION,
         SELECCIONADO,
         DESCARTADO,
         FINALIZADO
