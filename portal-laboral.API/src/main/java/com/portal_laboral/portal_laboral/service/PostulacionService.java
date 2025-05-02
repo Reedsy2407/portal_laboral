@@ -21,6 +21,10 @@ public class PostulacionService{
         return repository.findAll();
     }
 
+    public List<Postulacion> listarPorPublicacion(Integer idPublicacion) {
+        return repository.findByPublicacionId(idPublicacion);
+    }
+
     public Postulacion guardar(Postulacion postulacion) {
         return repository.save(postulacion);
     }

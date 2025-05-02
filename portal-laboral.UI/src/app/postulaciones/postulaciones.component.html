@@ -1,0 +1,26 @@
+<div class="container mt-4">
+    <h2>Mis Postulaciones</h2>
+    
+    <div *ngIf="postulaciones.length === 0" class="alert alert-info">
+      No tienes postulaciones registradas.
+    </div>
+  
+    <div *ngFor="let postulacion of postulaciones" class="card mb-3 shadow-sm">
+      <div class="card-body">
+        <div class="d-flex justify-content-between">
+          <h5 class="card-title">{{ postulacion.publicacion.titulo }}</h5>
+          <span class="badge {{ getBadgeClass(postulacion.estado) }}">
+            {{ postulacion.estado }}
+          </span>
+        </div>
+        <h6 class="card-subtitle mb-2 text-muted">
+          {{ postulacion.publicacion.empresa }}
+        </h6>
+        <p class="card-text">
+          <small class="text-muted">
+            Postulado el {{ postulacion.fechaPostulacion | date:'dd/MM/yyyy' }}
+          </small>
+        </p>
+      </div>
+    </div>
+  </div>

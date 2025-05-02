@@ -13,6 +13,9 @@ public interface PostulacionRepository extends JpaRepository<Postulacion, Intege
 
     List<Postulacion> findByUsuarioId(Integer id);
 
+    @Query("SELECT p FROM Postulacion p WHERE p.publicacion.id = :idPublicacion")
+    List<Postulacion> findByPublicacionId(@Param("idPublicacion") Integer idPublicacion);
+
     List<Postulacion> findByUsuarioIdAndPublicacion_IdPublicacion(Integer usuarioId, Integer idPublicacion);
 
     // Corregido para usar el nombre de la entidad en lugar del nombre de la tabla

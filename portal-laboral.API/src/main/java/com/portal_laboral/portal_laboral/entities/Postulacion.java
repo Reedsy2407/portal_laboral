@@ -14,6 +14,18 @@ public class Postulacion {
     @Column(name = "id_postulacion")
     private Integer id;
 
+    public enum EstadoPostulacion {
+        POSTULADO,
+        EN_REVISION,
+        SELECCIONADO,
+        DESCARTADO,
+        FINALIZADO
+    }
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "estado")
+    private EstadoPostulacion estado = EstadoPostulacion.POSTULADO;
+
     @Column(name = "fecha_postulacion")
     private LocalDateTime fecha = LocalDateTime.now();
 
@@ -33,6 +45,14 @@ public class Postulacion {
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public EstadoPostulacion getEstado() {
+        return estado;
+    }
+
+    public void setEstado(EstadoPostulacion estado) {
+        this.estado = estado;
     }
 
     public LocalDateTime getFecha() {

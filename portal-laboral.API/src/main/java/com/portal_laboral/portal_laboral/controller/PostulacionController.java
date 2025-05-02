@@ -44,6 +44,13 @@ public class PostulacionController {
         return postulacionService.listar();
     }
 
+    @GetMapping("/por-publicacion/{idPublicacion}")
+    public ResponseEntity<List<Postulacion>> obtenerPorPublicacion(
+            @PathVariable Integer idPublicacion) {
+        List<Postulacion> postulaciones = postulacionService.listarPorPublicacion(idPublicacion);
+        return ResponseEntity.ok(postulaciones);
+    }
+
     @PostMapping("/guardar")
     public Postulacion guardar(@RequestBody Postulacion postulacion){
         return postulacionService.guardar(postulacion);
@@ -58,6 +65,29 @@ public class PostulacionController {
     @GetMapping("/mis-postulaciones/{idUsuario}")
     public List<Publicacion> obtenerPostulacionesPorUsuario(@PathVariable Integer idUsuario) {
         return postulacionService.obtenerPublicacionesPorUsuario(idUsuario);
+    }
+
+    @PutMapping("/cambiar-estado/{id}")
+    public ResponseEntity<?> cambiarEstadoPostulacion(
+            @PathVariable Integer id,
+            @RequestBody Map<String, String> request) {
+        try {
+            Postulacion postulacion = postulacionService.buscarPorId(id);
+            if (postulacion == null) {
+                return ResponseEntity.notFound().build();
+            }
+
+            Postulacion.EstadoPostulacion nuevoEstado =
+                    Postulacion.EstadoPostulacion.valueOf(request.get("estado"));
+            postulacion.setEstado(nuevoEstado);
+            postulacionService.guardar(postulacion);
+
+            return ResponseEntity.ok().build();
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body("Estado no válido");
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().build();
+        }
     }
 
     @PostMapping("/crear")
