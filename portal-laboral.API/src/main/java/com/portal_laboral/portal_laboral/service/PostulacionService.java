@@ -44,6 +44,10 @@ public class PostulacionService{
                 .collect(Collectors.toList());
     }
 
+    public List<Postulacion> obtenerPostulacionesPorUsuario(Integer idUsuario) {
+        return repository.findByUsuarioId(idUsuario);
+    }
+
     public void eliminarPorUsuarioYPublicacion(Integer usuarioId, Integer publicacionId) {
         List<Postulacion> postulaciones = repository.findByUsuarioIdAndPublicacion_IdPublicacion(usuarioId, publicacionId);
         for (Postulacion p : postulaciones) {

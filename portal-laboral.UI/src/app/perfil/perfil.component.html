@@ -46,7 +46,7 @@
                 </div>
                 <div class="mb-3">
                   <h3 class="h6 text-muted mb-1">Fecha de registro:</h3>
-                  <p class="mb-0">{{ usuario.fecha | date:'medium' }}</p>
+                  {{ usuario.fecha ? (usuario.fecha | date:'medium') : 'Fecha no disponible' }}
                 </div>
               </div>
             </div>
@@ -63,6 +63,31 @@
                   <h3 class="h6 text-muted mb-1">Empresa:</h3>
                   <p class="mb-0">{{ usuario?.empresa?.nombre || 'No asignada' }}</p>
                 </div>
+                <div class="mb-3">
+                  <h3 class="h6 text-muted mb-1">CV:</h3>
+                  <div *ngIf="usuario?.cvFilename; else noCvTemplate">
+                      <p>{{ usuario.cvFilename }}</p>
+                      <button class="btn btn-sm btn-primary" (click)="downloadCv()" [disabled]="loading">
+                          <span *ngIf="!loading">Descargar CV</span>
+                          <span *ngIf="loading">Cargando...</span>
+                      </button>
+                  </div>
+                  <ng-template #noCvTemplate>
+                      <p>No se ha subido ningún CV</p>
+                  </ng-template>
+                  
+                  <div class="mt-3">
+                      <input type="file" accept=".pdf" (change)="onFileSelected($event)" 
+                             class="form-control" [disabled]="loading">
+                      <button class="btn btn-sm btn-success mt-2" (click)="uploadCv()" 
+                              [disabled]="!selectedFile || loading">
+                          <span *ngIf="!loading">Subir CV</span>
+                          <span *ngIf="loading">Subiendo...</span>
+
+                          VER CV
+                      </button>
+                  </div>
+              </div>
               </div>
             </div>
           </div>

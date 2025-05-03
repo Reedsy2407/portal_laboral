@@ -63,8 +63,8 @@ public class PostulacionController {
 
 
     @GetMapping("/mis-postulaciones/{idUsuario}")
-    public List<Publicacion> obtenerPostulacionesPorUsuario(@PathVariable Integer idUsuario) {
-        return postulacionService.obtenerPublicacionesPorUsuario(idUsuario);
+    public List<Postulacion> obtenerPostulacionesPorUsuario(@PathVariable Integer idUsuario) {
+        return postulacionService.obtenerPostulacionesPorUsuario(idUsuario);
     }
 
     @PutMapping("/cambiar-estado/{id}")

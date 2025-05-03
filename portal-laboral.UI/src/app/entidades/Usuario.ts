@@ -6,11 +6,12 @@ export interface Usuario {
   apellido?: string
   correo?: string
   password?: string
-  fecha?: Date
+  fecha?: Date | string;
   contacto: {
     telefono?: string
     sitioWeb?: string
     linkedin?: string
   }
   empresa?: Empresa
+  cvFilename?: string;
 }

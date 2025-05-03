@@ -7,6 +7,7 @@ import { EmpresaService } from '../servicios/empresa.service';
 import { AuthService } from '../servicios/auth.service';
 import { Usuario } from '../entidades/Usuario';
 import { PostulacionService } from '../servicios/postulacion.service';
+import { Empresa } from '../entidades/Empresa';
 declare var bootstrap: any; 
 
 @Component({
@@ -95,13 +96,13 @@ export class ReclutamientoComponent implements OnInit{
 
   crear(): void {
     if (this.formAviso.valid && this.idEmpresa) {
-      const nuevaPublicacion: Publicacion = {
+      const nuevaPublicacion: any = {
         titulo: this.formAviso.value.titulo,
         descripcion: this.formAviso.value.publicacion,
         lugar: this.formAviso.value.lugar,
         sueldo: this.formAviso.value.sueldo,
         modalidad: this.formAviso.value.modalidad,
-        empresa: this.idEmpresa   // Enviar como objeto con id
+        empresa: { id: this.idEmpresa }   // Enviar como objeto con id
       };
   
       this.publicacionService.crearPublicacion(nuevaPublicacion)
@@ -135,7 +136,7 @@ export class ReclutamientoComponent implements OnInit{
   }
 
   // En tu componente
-cambiarEstadoPostulacion(idPostulacion: number, nuevoEstado: string) {
+cambiarEstadoPostulacion(idPostulacion: number, nuevoEstado: string) { //AGREGAR CONDICIONAL VERIFICAR ID POSTULACION
   this.postulacionService.cambiarEstadoPostulacion(idPostulacion, nuevoEstado).subscribe({
     next: () => {
       // Actualizar el estado localmente

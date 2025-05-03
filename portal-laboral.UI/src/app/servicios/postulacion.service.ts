@@ -12,14 +12,10 @@ export class PostulacionService {
 
   constructor(private http: HttpClient) {}
 
-  obtenerPostulacionesDelUsuario(usuarioId: number): Observable<Postulacion[]> {
-    return this.http.get<Postulacion[]>(`${API.url + this.request}/mis-postulaciones/${usuarioId}`).pipe(
-      map(postulaciones => postulaciones.map(p => ({
-        ...p,
-        estado: p.estado || 'POSTULADO' // Valor por defecto
-      }))
-    ));
-  }
+  // En tu PostulacionService
+obtenerPostulacionesDelUsuario(usuarioId: number): Observable<Postulacion[]> {
+  return this.http.get<Postulacion[]>(`${API.url + this.request}/mis-postulaciones/${usuarioId}`);
+}
 
   postular(usuarioId: number, publicacionId: number): Observable<any> {
     const body = { usuarioId, publicacionId };

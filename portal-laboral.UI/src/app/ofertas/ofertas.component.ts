@@ -55,10 +55,15 @@ export class OfertasComponent implements OnInit {
     
     this.postulacionService.obtenerPostulacionesDelUsuario(usuarioId).subscribe({
       next: (postulaciones) => {
+        // Asegurarse de que todas las postulaciones tengan estado
         this.postulacionesUsuario = postulaciones.map(p => ({
           ...p,
-          estado: p.estado || 'POSTULADO'
+          estado: p.estado || EstadoPostulacion.POSTULADO
         }));
+        
+        // Verificar que las postulaciones se están cargando correctamente
+        console.log('Postulaciones cargadas:', this.postulacionesUsuario);
+        
         this.isLoading = false;
       },
       error: (err) => {
@@ -67,7 +72,7 @@ export class OfertasComponent implements OnInit {
         this.errorMessage = 'Error al cargar tus postulaciones';
       }
     });
-  }
+  } 
 
 
 
@@ -99,68 +104,99 @@ export class OfertasComponent implements OnInit {
 
   postular(oferta: Publicacion): void {
     const usuarioId = this.authService.obtenerUsuarioId();
-    if (usuarioId === null) return;
-
-    this.postulacionService.postular(usuarioId, oferta.idPublicacion!).subscribe(() => {
-      // Crear una postulación básica localmente
-      const nuevaPostulacion: Postulacion = {
-        id: 0,
-        estado: EstadoPostulacion.POSTULADO,
-        fechaPostulacion: new Date().toISOString(),
-        usuario: usuarioId,
-        publicacion: oferta.idPublicacion!
-      };
-      this.postulacionesUsuario.push(nuevaPostulacion);
+    if (usuarioId === null || !oferta.idPublicacion) return;
+  
+    this.postulacionService.postular(usuarioId, oferta.idPublicacion).subscribe({
+      next: (postulacion) => {
+        // Crear una postulación completa localmente si el backend no devuelve toda la estructura
+        const nuevaPostulacion: Postulacion = {
+          id: postulacion.id || 0,
+          estado: postulacion.estado || EstadoPostulacion.POSTULADO,
+          fecha: postulacion.fecha || new Date().toISOString(),
+          usuario: {
+            id: usuarioId
+            // Agrega otras propiedades si son necesarias
+          },
+          publicacion: {
+            idPublicacion: oferta.idPublicacion,
+            // Agrega otras propiedades mínimas necesarias
+            titulo: oferta.titulo,
+            empresa: {
+              nombre: oferta.empresa?.nombre || ''
+            }
+          }
+        };
+        this.postulacionesUsuario.push(nuevaPostulacion);
+      },
+      error: (err) => {
+        console.error('Error al postular:', err);
+      }
     });
   }
-
   despostular(oferta: Publicacion): void {
     const usuarioId = this.authService.obtenerUsuarioId();
     if (usuarioId === null) return;
     
-    this.postulacionService.eliminarPostulacion(usuarioId, oferta.idPublicacion!).subscribe(() => {
-      this.postulacionesUsuario = this.postulacionesUsuario.filter(
-        p => p.publicacion !== oferta.idPublicacion
-
-      );
+    this.postulacionService.eliminarPostulacion(usuarioId, oferta.idPublicacion!).subscribe({
+      next: () => {
+        this.postulacionesUsuario = this.postulacionesUsuario.filter(
+          p => p.publicacion.idPublicacion !== oferta.idPublicacion
+        );
+      },
+      error: (err) => {
+        console.error('Error al despostular:', err);
+      }
     });
   }
 
-  estaPostulado(id: number): boolean {
-    return this.postulacionesUsuario.some(p => 
-      p.publicacion === id && p.estado !== 'DESCARTADO'
-    );
+  estaPostulado(idPublicacion: number | undefined): boolean {
+    if (!idPublicacion) return false;
+    return this.postulacionesUsuario.some(p => {
+      // Maneja tanto postulaciones completas como parciales
+      const publicacionId = typeof p.publicacion === 'object' ? 
+                           p.publicacion.idPublicacion : 
+                           (p.publicacion as unknown as number);
+      return publicacionId === idPublicacion;
+    });
   }
 
-  getPostulacion(idPublicacion: number): Postulacion | undefined {
-    return this.postulacionesUsuario.find(p => p.publicacion === idPublicacion);
+  getPostulacion(idPublicacion: number | undefined): Postulacion | undefined {
+    if (!idPublicacion) return undefined;
+    return this.postulacionesUsuario.find(p => {
+      const publicacionId = typeof p.publicacion === 'object' ? 
+                           p.publicacion.idPublicacion : 
+                           (p.publicacion as unknown as number);
+      return publicacionId === idPublicacion;
+    });
   }
+// Actualizar el método obtenerPostulacionesPorPublicacion
+getPostulacionesPorPublicacion(id: number): void {
+  const usuarioId = this.authService.obtenerUsuarioId();
+  if (!usuarioId) return;
 
-  getPostulacionesPorPublicacion(id: number): void {
-    const usuarioId = this.authService.obtenerUsuarioId();
-    if (!usuarioId) return;
-
-    this.postulacionService.obtenerPostulacionPorPublicacionId(id).subscribe({
-      next: (postulaciones) => {
-        if (postulaciones && Array.isArray(postulaciones)) {
-          const postulacionUsuario = postulaciones.find(p => p.usuario === usuarioId);
-          if (postulacionUsuario) {
-            // Actualizar la postulación en el array local
-            const index = this.postulacionesUsuario.findIndex(
-              p => p.publicacion === id
-            );
-            if (index !== -1) {
-              this.postulacionesUsuario[index] = postulacionUsuario;
-            }
+  this.postulacionService.obtenerPostulacionPorPublicacionId(id).subscribe({
+    next: (postulaciones) => {
+      if (postulaciones && Array.isArray(postulaciones)) {
+        const postulacionUsuario = postulaciones.find(p => 
+          p.usuario.id === usuarioId
+        );
+        if (postulacionUsuario) {
+          // Actualizar la postulación en el array local
+          const index = this.postulacionesUsuario.findIndex(
+            p => p.publicacion.idPublicacion === id
+          );
+          if (index !== -1) {
+            this.postulacionesUsuario[index] = postulacionUsuario;
           }
         }
-      },
-      error: (error) => console.error('Error al obtener postulaciones:', error)
-    });
-  }
+      }
+    },
+    error: (error) => console.error('Error al obtener postulaciones:', error)
+  });
+}
 
   actualizarEstadoPostulacion(idPublicacion: number, nuevoEstado: string): void {
-    const index = this.postulacionesUsuario.findIndex(p => p.publicacion === idPublicacion);
+    const index = this.postulacionesUsuario.findIndex(p => p.publicacion.idPublicacion === idPublicacion);
     if (index !== -1) {
       // Convierte el string al enum correspondiente
       this.postulacionesUsuario[index].estado = this.convertirStringAEstado(nuevoEstado);
@@ -171,5 +207,28 @@ private convertirStringAEstado(estadoString: string): EstadoPostulacion {
   // Convierte el string al enum de manera segura
   const estado = EstadoPostulacion[estadoString as keyof typeof EstadoPostulacion];
   return estado || EstadoPostulacion.POSTULADO; // Valor por defecto si la conversión falla
+}
+
+transformarFecha(fechaInput: any): Date | null {
+  if (!fechaInput) return null;
+  
+  // Si ya es un string de fecha ISO
+  if (typeof fechaInput === 'string') {
+    return new Date(fechaInput);
+  }
+  
+  // Si es un array [año, mes, día, ...]
+  if (Array.isArray(fechaInput)) {
+    // Los meses en JavaScript son 0-indexed (0=Enero, 1=Febrero, etc.)
+    const [year, month, day, hours, minutes, seconds, milliseconds] = fechaInput;
+    return new Date(year, month - 1, day, hours, minutes, seconds, milliseconds / 1000000);
+  }
+  
+  // Si es un timestamp numérico
+  if (typeof fechaInput === 'number') {
+    return new Date(fechaInput);
+  }
+  
+  return null;
 }
 }

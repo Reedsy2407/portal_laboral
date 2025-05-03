@@ -39,9 +39,43 @@ public class Usuario {
     @Embedded
     private Contacto contacto;
 
+    @Column(name = "cv_filename")
+    private String cvFilename;
+
+    @Column(name = "cv_content_type")
+    private String cvContentType;
+
+    @Lob
+    @Column(name = "cv_data", columnDefinition = "LONGBLOB")
+    private byte[] cvData;
+
     public Usuario() { }
 
     public Usuario (Integer usuarioId) { }
+
+    public String getCvFilename() {
+        return cvFilename;
+    }
+
+    public void setCvFilename(String cvFilename) {
+        this.cvFilename = cvFilename;
+    }
+
+    public String getCvContentType() {
+        return cvContentType;
+    }
+
+    public void setCvContentType(String cvContentType) {
+        this.cvContentType = cvContentType;
+    }
+
+    public byte[] getCvData() {
+        return cvData;
+    }
+
+    public void setCvData(byte[] cvData) {
+        this.cvData = cvData;
+    }
 
     
 

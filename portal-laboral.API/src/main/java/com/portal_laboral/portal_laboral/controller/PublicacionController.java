@@ -48,10 +48,10 @@ public class PublicacionController {
     @PutMapping("/eliminarPublicacion/{id}")
     public ResponseEntity<String> eliminar(@PathVariable Integer id) {
         Publicacion publicacion = publicacionService.buscarPorId(id);
-    
-    publicacion.setEstado("eliminado");
-    publicacionService.crear(publicacion);
-    return ResponseEntity.ok("Publicación marcada como eliminada");
+
+        publicacion.setEstado("eliminado");
+        publicacionService.crear(publicacion);
+        return ResponseEntity.ok("Publicación marcada como eliminada");
     }
 
     @GetMapping("/buscarPorEmpresa/{idEmpresa}")

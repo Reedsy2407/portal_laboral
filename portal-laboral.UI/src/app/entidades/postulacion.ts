@@ -1,18 +1,26 @@
-import { Publicacion } from "./Publicacion";
-import { Usuario } from "./Usuario";
-
 export interface Postulacion {
+  id: number;
+  estado: EstadoPostulacion;
+  fecha: string | Date | number[];
+  usuario: {
     id: number;
-    estado: string;
-    fechaPostulacion: string; // Usamos string porque se serializa desde JSON
-    usuario: number;
-    publicacion: number;
-  }
+    nombre?: string;
+    // otras propiedades opcionales
+  };
+  publicacion: {
+    idPublicacion: number;
+    titulo?: string;
+    empresa?: {
+      nombre?: string;
+    };
+    // otras propiedades opcionales
+  };
+}
 
 export enum EstadoPostulacion {
-    POSTULADO = 'POSTULADO',
-    EN_REVISION = 'EN_REVISION',
-    SELECCIONADO = 'SELECCIONADO',
-    DESCARTADO = 'DESCARTADO',
-    FINALIZADO = 'FINALIZADO'
-  }
+  POSTULADO = 'POSTULADO',
+  EN_REVISION = 'EN_REVISION',
+  SELECCIONADO = 'SELECCIONADO',
+  DESCARTADO = 'DESCARTADO',
+  FINALIZADO = 'FINALIZADO'
+}

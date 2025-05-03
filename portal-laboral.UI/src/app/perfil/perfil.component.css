@@ -120,3 +120,36 @@
   .initials-avatar {
     font-weight: bold;
   }
+
+  /* Estilos para la sección de CV */
+.cv-section {
+  border: 1px solid #dee2e6;
+  border-radius: 0.25rem;
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+.cv-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+/* Mejora visual para el input de archivo */
+.file-input-container {
+  margin-top: 1rem;
+  padding: 1rem;
+  background-color: #f8f9fa;
+  border-radius: 0.25rem;
+  border: 1px dashed #adb5bd;
+}
+
+/* Animaciones para botones */
+.btn {
+  transition: all 0.2s ease;
+}
+
+/* Iconos */
+.bi {
+  vertical-align: middle;
+}

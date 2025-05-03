@@ -1,58 +1,58 @@
 <div class="row mt-4" *ngIf="listaOfertas.length > 0">
   <!-- Lista de Ofertas -->
   <div class="col-md-6">
-    <div *ngFor="let oferta of listaOfertas" 
-         (click)="seleccionarOferta(oferta)"
-         [ngClass]="{'border border-primary': oferta === ofertaSeleccionada}"
-         class="card shadow-sm p-3 rounded mb-3 cursor-pointer">
+    <div *ngFor="let oferta of listaOfertas" (click)="seleccionarOferta(oferta)"
+      [ngClass]="{'border border-primary': oferta === ofertaSeleccionada}"
+      class="card shadow-sm p-3 rounded mb-3 cursor-pointer">
 
       <h5 class="fw-bold">{{ oferta.titulo }}</h5>
-      <p class="mb-0 text-muted">{{ oferta.empresa }}</p>
+      <p class="mb-0 text-muted">{{ oferta.empresa?.nombre }}</p>
       <small class="text-muted">{{ oferta.lugar }}</small>
       <small class="text-muted d-block">S/. {{ oferta.sueldo | number: '1.2'}}</small>
       <small class="text-muted">Publicado el <b>{{ oferta.fecha | date: 'dd/MM/yyyy' }}</b></small>
-      
+
       <!-- Mostrar estado si está postulado -->
-      <div *ngIf="estaPostulado(oferta.idPublicacion!)" class="mt-2">
-        <span class="badge" [ngClass]="getBadgeClass(getPostulacion(oferta.idPublicacion!)?.estado)">
-          {{ getPostulacion(oferta.idPublicacion!)?.estado || 'POSTULADO' }}
+      <div *ngIf="oferta.idPublicacion && estaPostulado(oferta.idPublicacion)" class="mt-2">
+        <span class="badge" [ngClass]="getBadgeClass(getPostulacion(oferta.idPublicacion)?.estado)">
+          {{ getPostulacion(oferta.idPublicacion)?.estado || 'POSTULADO' | uppercase }}
         </span>
       </div>
     </div>
   </div>
 
   <!-- Panel Detalle -->
-  <div class="col-md-6" *ngIf="ofertaSeleccionada">
+  <div class="col-md-6" *ngIf="ofertaSeleccionada && ofertaSeleccionada.idPublicacion">
     <div class="card p-3">
       <h5 class="fw-bold">Descripción del Puesto</h5>
       <p>{{ ofertaSeleccionada.descripcion }}</p>
-      
+
       <!-- Detalles de postulación -->
-      <div *ngIf="estaPostulado(ofertaSeleccionada.idPublicacion!)" class="mb-3 p-3 bg-light rounded">
+      <div *ngIf="estaPostulado(ofertaSeleccionada.idPublicacion)" class="mb-3 p-3 bg-light rounded">
         <h6 class="fw-bold">Tu postulación:</h6>
-        <div class="mt-2">
-          <span class="badge" [ngClass]="getBadgeClass(getPostulacion(ofertaSeleccionada.idPublicacion!)?.estado)">
-            {{ getPostulacion(ofertaSeleccionada.idPublicacion!)?.estado || 'POSTULADO' }}
+        <div *ngIf="ofertaSeleccionada.idPublicacion && estaPostulado(ofertaSeleccionada.idPublicacion)" class="mt-2">
+          <span class="badge" [ngClass]="getBadgeClass(getPostulacion(ofertaSeleccionada.idPublicacion)?.estado)">
+            {{ (getPostulacion(ofertaSeleccionada.idPublicacion)?.estado || 'POSTULADO') | uppercase }}
           </span>
           <small class="text-muted ms-2">
-            Postulado el {{ getPostulacion(ofertaSeleccionada.idPublicacion!)?.fechaPostulacion | date:'dd/MM/yyyy' }}
+            Postulado el {{ transformarFecha(getPostulacion(ofertaSeleccionada.idPublicacion)?.fecha) |
+            date:'dd/MM/yyyy' }}
           </small>
         </div>
       </div>
-  
-      <button 
-  class="btn w-100"
-  [ngClass]="{
-    'btn-success': estaPostulado(ofertaSeleccionada.idPublicacion!),
-    'btn-outline-primary': !estaPostulado(ofertaSeleccionada.idPublicacion!)
-  }"
-  (click)="estaPostulado(ofertaSeleccionada.idPublicacion!) ? 
-           despostular(ofertaSeleccionada) : 
-           postular(ofertaSeleccionada)">
-  {{ estaPostulado(ofertaSeleccionada.idPublicacion!) ? 
-     'Quitar postulación' : 
-     'Postular' }}
-</button>
+
+      <button class="btn w-100" [ngClass]="{
+          'btn-success': estaPostulado(ofertaSeleccionada.idPublicacion) && getPostulacion(ofertaSeleccionada.idPublicacion)?.estado !== 'DESCARTADO',
+          'btn-outline-primary': !estaPostulado(ofertaSeleccionada.idPublicacion),
+          'btn-danger': estaPostulado(ofertaSeleccionada.idPublicacion) && getPostulacion(ofertaSeleccionada.idPublicacion)?.estado === 'DESCARTADO'
+        }" [disabled]="getPostulacion(ofertaSeleccionada.idPublicacion)?.estado === 'DESCARTADO'" (click)="estaPostulado(ofertaSeleccionada.idPublicacion) ? 
+                 despostular(ofertaSeleccionada) : 
+                 postular(ofertaSeleccionada)">
+        {{ estaPostulado(ofertaSeleccionada.idPublicacion) ?
+        (getPostulacion(ofertaSeleccionada.idPublicacion)?.estado === 'DESCARTADO' ?
+        'Postulación DESCARTADA' :
+        'Quitar postulación') :
+        'Postular' }}
+      </button>
     </div>
   </div>
 </div>
