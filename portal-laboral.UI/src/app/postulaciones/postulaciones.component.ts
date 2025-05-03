@@ -10,7 +10,7 @@ import { AuthService } from '../servicios/auth.service';
 })
 export class PostulacionesComponent implements OnInit{
   postulaciones: any[] = [];
-  estados = ['POSTULADO', 'EN_REVISION', 'SELECCIONADO', 'DESCARTADO', 'FINALIZADO'];
+  estados = ['POSTULADO', 'SELECCIONADO', 'DESCARTADO', 'FINALIZADO'];
 
   constructor(
     private postulacionService: PostulacionService,
@@ -23,6 +23,8 @@ export class PostulacionesComponent implements OnInit{
       this.postulacionService.obtenerPostulacionesDelUsuario(usuarioId).subscribe(
         (data) => {
           this.postulaciones = data;
+          console.log('Postulaciones recibidas:', this.postulaciones);
+
         }
       );
     }
@@ -43,5 +45,17 @@ export class PostulacionesComponent implements OnInit{
       default:
         return 'bg-light text-dark';
     }
+  }
+
+  parseFecha(fechaArray: number[]): Date {
+    return new Date(
+      fechaArray[0], // año
+      fechaArray[1] - 1, // mes (0-based)
+      fechaArray[2], // día
+      fechaArray[3], // horas
+      fechaArray[4], // minutos
+      fechaArray[5], // segundos
+      fechaArray[6] / 1000000 // milisegundos
+    );
   }
 }

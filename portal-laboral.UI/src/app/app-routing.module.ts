@@ -7,6 +7,7 @@ import { UsuariosComponent } from './usuarios/usuarios.component';
 import { RegisterComponent } from './register/register.component';
 import { ReclutamientoComponent } from './reclutamiento/reclutamiento.component';
 import { PerfilComponent } from './perfil/perfil.component';
+import { PostulacionesComponent } from './postulaciones/postulaciones.component';
 
 const routes: Routes = [
   {path:'', component: InicioComponent, pathMatch: 'full'},
@@ -16,7 +17,8 @@ const routes: Routes = [
   { path: 'usuarios', component: UsuariosComponent },
   { path: 'register', component: RegisterComponent },
   { path: 'reclutamiento', component: ReclutamientoComponent},
-  { path: 'perfil', component:PerfilComponent}
+  { path: 'perfil', component:PerfilComponent},
+  { path: 'postulaciones', component: PostulacionesComponent}
 
 ];
 
