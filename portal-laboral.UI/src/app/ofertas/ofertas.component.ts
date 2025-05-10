@@ -6,9 +6,11 @@ import { AuthService } from '../servicios/auth.service';
 import { EstadoPostulacion, Postulacion } from '../entidades/postulacion';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-ofertas',
+  standalone: false,
   templateUrl: './ofertas.component.html',
   styleUrls: ['./ofertas.component.css']
 })
@@ -75,6 +77,7 @@ export class OfertasComponent implements OnInit {
   }
 
   cargarOfertas(): void {
+    this.isLoading = true;
     this.publicacionService.getPublicaciones().subscribe({
       next: (data) => {
         this.listaOfertas = data;
@@ -83,17 +86,27 @@ export class OfertasComponent implements OnInit {
         this.cargarPostulaciones();
       },
       error: (err) => {
-        console.error('Error al cargar ofertas:', err);
         this.isLoading = false;
-        this.errorMessage = 'Error al cargar las ofertas';
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'No se pudieron cargar las ofertas laborales',
+          confirmButtonColor: '#3085d6',
+          timer: 3000
+        });
       }
     });
   }
-
   cargarPostulaciones(): void {
     const usuarioId = this.authService.obtenerUsuarioId(); 
     if (!usuarioId) {
       this.isLoading = false;
+      Swal.fire({
+        icon: 'warning',
+        title: 'Sesión requerida',
+        text: 'Debes iniciar sesión para ver tus postulaciones',
+        confirmButtonColor: '#3085d6'
+      });
       return;
     }
     
@@ -104,12 +117,17 @@ export class OfertasComponent implements OnInit {
           estado: p.estado || EstadoPostulacion.POSTULADO
         }));
         this.isLoading = false;
-        this.aplicarFiltros(); // Aplicar filtros después de cargar postulaciones
+        this.aplicarFiltros();
       },
       error: (err) => {
-        console.error('Error al cargar postulaciones:', err);
         this.isLoading = false;
-        this.errorMessage = 'Error al cargar tus postulaciones';
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'No se pudieron cargar tus postulaciones',
+          confirmButtonColor: '#3085d6',
+          timer: 3000
+        });
       }
     });
   }
@@ -264,40 +282,113 @@ export class OfertasComponent implements OnInit {
 
   postular(oferta: Publicacion): void {
     const usuarioId = this.authService.obtenerUsuarioId();
-    if (usuarioId === null || !oferta.idPublicacion) return;
-  
-    this.postulacionService.postular(usuarioId, oferta.idPublicacion).subscribe({
-      next: (postulacion) => {
-        const nuevaPostulacion: Postulacion = {
-          id: postulacion.id || 0,
-          estado: postulacion.estado || EstadoPostulacion.POSTULADO,
-          fecha: postulacion.fecha || new Date().toISOString(),
-          usuario: { id: usuarioId },
-          publicacion: {
-            idPublicacion: oferta.idPublicacion,
-            titulo: oferta.titulo,
-            empresa: { nombre: oferta.empresa?.nombre || '' }
+    if (usuarioId === null || !oferta.idPublicacion) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'No se pudo completar la postulación',
+        confirmButtonColor: '#3085d6'
+      });
+      return;
+    }
+
+    Swal.fire({
+      title: '¿Postular a esta oferta?',
+      text: `Estás a punto de postularte a: ${oferta.titulo}`,
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Sí, postularme',
+      cancelButtonText: 'Cancelar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.postulacionService.postular(usuarioId, oferta.idPublicacion).subscribe({
+          next: (postulacion) => {
+            const nuevaPostulacion: Postulacion = {
+              id: postulacion.id || 0,
+              estado: postulacion.estado || EstadoPostulacion.POSTULADO,
+              fecha: postulacion.fecha || new Date().toISOString(),
+              usuario: { id: usuarioId },
+              publicacion: {
+                idPublicacion: oferta.idPublicacion,
+                titulo: oferta.titulo,
+                empresa: { nombre: oferta.empresa?.nombre || '' }
+              }
+            };
+            this.postulacionesUsuario.push(nuevaPostulacion);
+            this.aplicarFiltros();
+            
+            Swal.fire({
+              icon: 'success',
+              title: '¡Postulación exitosa!',
+              text: `Te has postulado a ${oferta.titulo}`,
+              confirmButtonColor: '#3085d6',
+              timer: 2000
+            });
+          },
+          error: (err) => {
+            Swal.fire({
+              icon: 'error',
+              title: 'Error',
+              text: 'No se pudo completar la postulación',
+              confirmButtonColor: '#3085d6'
+            });
           }
-        };
-        this.postulacionesUsuario.push(nuevaPostulacion);
-        this.aplicarFiltros(); // Reaplicar filtros para actualizar vista
-      },
-      error: (err) => console.error('Error al postular:', err)
+        });
+      }
     });
   }
 
+
   despostular(oferta: Publicacion): void {
     const usuarioId = this.authService.obtenerUsuarioId();
-    if (usuarioId === null) return;
-    
-    this.postulacionService.eliminarPostulacion(usuarioId, oferta.idPublicacion!).subscribe({
-      next: () => {
-        this.postulacionesUsuario = this.postulacionesUsuario.filter(
-          p => p.publicacion.idPublicacion !== oferta.idPublicacion
-        );
-        this.aplicarFiltros(); // Reaplicar filtros para actualizar vista
-      },
-      error: (err) => console.error('Error al despostular:', err)
+    if (usuarioId === null) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'No se pudo cancelar la postulación',
+        confirmButtonColor: '#3085d6'
+      });
+      return;
+    }
+
+    Swal.fire({
+      title: '¿Cancelar postulación?',
+      text: `Estás a punto de cancelar tu postulación a: ${oferta.titulo}`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Sí, cancelar',
+      cancelButtonText: 'No, mantener'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.postulacionService.eliminarPostulacion(usuarioId, oferta.idPublicacion!).subscribe({
+          next: () => {
+            this.postulacionesUsuario = this.postulacionesUsuario.filter(
+              p => p.publicacion.idPublicacion !== oferta.idPublicacion
+            );
+            this.aplicarFiltros();
+            
+            Swal.fire({
+              icon: 'success',
+              title: 'Postulación cancelada',
+              text: `Has cancelado tu postulación a ${oferta.titulo}`,
+              confirmButtonColor: '#3085d6',
+              timer: 2000
+            });
+          },
+          error: (err) => {
+            Swal.fire({
+              icon: 'error',
+              title: 'Error',
+              text: 'No se pudo cancelar la postulación',
+              confirmButtonColor: '#3085d6'
+            });
+          }
+        });
+      }
     });
   }
 

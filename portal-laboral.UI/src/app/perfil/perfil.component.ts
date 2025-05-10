@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Usuario } from '../entidades/Usuario';
 import { UsuarioService } from '../servicios/usuario.service';
 import { saveAs } from 'file-saver';
@@ -7,16 +7,14 @@ import { saveAs } from 'file-saver';
   selector: 'app-perfil',
   standalone: false,
   templateUrl: './perfil.component.html',
-  styleUrl: './perfil.component.css'
+  styleUrls: ['./perfil.component.css']
 })
-export class PerfilComponent {
-  usuario?: Usuario | null = null;
+export class PerfilComponent implements OnInit {
+  usuario: Usuario | null = null;
   loading: boolean = true;
   error: string | null = null;
   selectedFile: File | null = null;
-  // En tu componente
-successMessage: string | null = null;
-
+  successMessage: string | null = null;
 
   constructor(private usuarioService: UsuarioService) {}
 
@@ -27,65 +25,79 @@ successMessage: string | null = null;
   cargarUsuario(): void {
     const idUsuario = localStorage.getItem('idUsuario');
     if (!idUsuario) {
-        this.error = 'No se encontró ID de usuario';
-        this.loading = false;
-        return;
+      this.error = 'No se encontró ID de usuario';
+      this.loading = false;
+      return;
     }
 
+    this.loading = true;
+    this.error = null;
+    this.successMessage = null;
+
     this.usuarioService.buscarPorId(parseInt(idUsuario)).subscribe({
-        next: (usuario) => {
-            // Convertir fecha si es necesario
-            if (usuario.fecha && typeof usuario.fecha === 'string') {
-                usuario.fecha = new Date(usuario.fecha);
-            }
-            this.usuario = usuario;
-            this.loading = false;
-        },
-        error: (err) => {
-            this.error = 'Error al cargar usuario';
-            this.loading = false;
-            console.error(err);
+      next: (usuario) => {
+        // Asegurarnos de procesar la fecha correctamente
+        if (usuario.fecha) {
+          usuario.fecha = this.transformarFecha(usuario.fecha);
         }
+        
+        
+        this.usuario = usuario;
+        this.loading = false;
+      },
+      error: (err) => {
+        this.error = 'Error al cargar usuario: ' + (err.error?.message || err.message);
+        this.loading = false;
+        console.error('Error al cargar usuario:', err);
+      }
     });
   }
 
   onFileSelected(event: any): void {
-    this.selectedFile = event.target.files[0];
+    const file = event.target.files[0];
+    if (file && file.type === 'application/pdf') {
+      this.selectedFile = file;
+    } else {
+      this.error = 'Por favor seleccione un archivo PDF válido';
+      this.selectedFile = null;
+    }
   }
 
   uploadCv(): void {
     if (!this.selectedFile || !this.usuario?.id) {
-        this.error = 'Selecciona un archivo válido';
-        return;
-    }
-
-    if (this.selectedFile.type !== 'application/pdf') {
-        this.error = 'Solo se permiten archivos PDF';
-        return;
+      this.error = 'Selecciona un archivo válido';
+      return;
     }
 
     this.loading = true;
     this.error = null;
 
     this.usuarioService.uploadCv(this.usuario.id, this.selectedFile).subscribe({
-        next: () => {
-            this.loading = false;
-            // Recargar los datos del usuario para actualizar el CV
-            this.cargarUsuario();
-            // Mostrar mensaje de éxito
-            this.successMessage = 'CV subido correctamente';
-            setTimeout(() => this.successMessage = null, 3000);
-        },
-        error: (err) => {
-            this.loading = false;
-            this.error = err.error?.message || 'Error al subir el CV';
-            console.error('Error:', err);
+      next: (response) => {
+        // Actualizar el nombre del archivo en el usuario local
+        if (this.usuario) {
+          this.usuario.cvFilename = this.selectedFile?.name || 'documento.pdf';
         }
+        this.successMessage = 'CV subido correctamente';
+        this.loading = false;
+        this.selectedFile = null;
+        
+        // Limpiar el input de archivo
+        const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement;
+        if (fileInput) fileInput.value = '';
+        
+        setTimeout(() => this.successMessage = null, 3000);
+      },
+      error: (err) => {
+        this.error = err.error?.message || 'Error al subir el CV';
+        this.loading = false;
+        console.error('Error al subir CV:', err);
+      }
     });
-}
+  }
 
   downloadCv(): void {
-    if (!this.usuario || this.usuario.id === undefined) {
+    if (!this.usuario?.id) {
       this.error = 'Usuario no válido';
       return;
     }
@@ -98,33 +110,26 @@ successMessage: string | null = null;
         this.loading = false;
       },
       error: (err) => {
-        this.error = 'Error al descargar el CV';
+        this.error = 'Error al descargar el CV: ' + (err.error?.message || err.message);
         this.loading = false;
-        console.error(err);
+        console.error('Error al descargar CV:', err);
       }
     });
   }
 
-  transformarFecha(fechaInput: any): Date | null {
-    if (!fechaInput) return null;
+  transformarFecha(fechaInput: any): Date {
+    if (!fechaInput) return new Date();
     
-    // Si ya es un string de fecha ISO
     if (typeof fechaInput === 'string') {
+      // Si es un string ISO (de backend)
       return new Date(fechaInput);
     }
     
-    // Si es un array [año, mes, día, ...]
     if (Array.isArray(fechaInput)) {
-      // Los meses en JavaScript son 0-indexed (0=Enero, 1=Febrero, etc.)
-      const [year, month, day, hours, minutes, seconds, milliseconds] = fechaInput;
-      return new Date(year, month - 1, day, hours, minutes, seconds, milliseconds / 1000000);
+      // Si viene como array [año, mes, día...]
+      return new Date(fechaInput[0], fechaInput[1] - 1, fechaInput[2]);
     }
     
-    // Si es un timestamp numérico
-    if (typeof fechaInput === 'number') {
-      return new Date(fechaInput);
-    }
-    
-    return null;
+    return new Date(fechaInput);
   }
 }

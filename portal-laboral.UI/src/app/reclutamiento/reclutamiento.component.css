@@ -1,0 +1,59 @@
+/* Agregar al archivo CSS del componente */
+.modal-content {
+    border-radius: 10px;
+    border: none;
+  }
+  
+  .card {
+    border-radius: 8px;
+    transition: all 0.2s ease;
+  }
+  
+  .card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+  }
+  
+  .btn-sm {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+    border-radius: 5px;
+  }
+  
+  .badge {
+    font-weight: 500;
+    padding: 0.35em 0.65em;
+  }
+
+  .hover-effect {
+    transition: all 0.2s ease;
+  }
+  
+  .hover-effect:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1) !important;
+  }
+  
+  .nav-tabs .nav-link {
+    border: none;
+    color: #6c757d;
+    font-weight: 500;
+    padding: 0.75rem 1.5rem;
+  }
+  
+  .nav-tabs .nav-link.active {
+    color: #0d6efd;
+    border-bottom: 3px solid #0d6efd;
+    background-color: transparent;
+  }
+  
+  .form-control, .form-select {
+    border-radius: 8px;
+    padding: 0.5rem 1rem;
+  }
+  
+  .badge {
+    font-weight: 500;
+    padding: 0.35em 0.65em;
+    border-radius: 6px;
+  }

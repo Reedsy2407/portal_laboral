@@ -1,145 +1,235 @@
-<ul class="nav">
-  <li class="nav-item">
-    <a class="nav-link active" aria-current="page" (click)="cambiarEstado(true)">Mis avisos</a>
-  </li>
-  <li class="nav-item">
-    <a class="nav-link" (click)="cambiarEstado(false)">Publicar un aviso</a>
-  </li>
-</ul>
-
-<div *ngIf="show">
-  <h2>Mis Publicaciones</h2>
-  <div *ngIf="publicaciones.length === 0" class="alert alert-info">
-    No tienes publicaciones aún.
-  </div>
-
-  <div *ngFor="let publicacion of publicaciones" class="card mb-3">
-    <div class="card-body">
-      <h5 class="card-title">{{ publicacion.titulo }}</h5>
-      <p class="card-text">{{ publicacion.descripcion }}</p>
-      <ul class="list-group list-group-flush">
-        <li class="list-group-item"><strong>Lugar:</strong> {{ publicacion.lugar }}</li>
-        <li class="list-group-item"><strong>Sueldo:</strong> ${{ publicacion.sueldo | number }}</li>
-        <li class="list-group-item"><strong>Modalidad:</strong> {{ publicacion.modalidad }}</li>
-        <li class="list-group-item">
-          <strong>Fecha:</strong> {{ publicacion.fecha | date:'medium' }}
+<div class="container-fluid py-4">
+  <!-- Pestañas de navegación -->
+  <div class="row mb-4">
+    <div class="col-12">
+      <ul class="nav nav-tabs">
+        <li class="nav-item">
+          <a class="nav-link" [ngClass]="{'active': show}" (click)="cambiarEstado(true)">
+            <i class="bi bi-card-list me-2"></i>Mis Avisos
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" [ngClass]="{'active': !show}" (click)="cambiarEstado(false)">
+            <i class="bi bi-plus-circle me-2"></i>Publicar Aviso
+          </a>
         </li>
       </ul>
-      <button class="btn btn-primary mt-2 ms-2"
-  (click)="verPostulantes(publicacion.idPublicacion!, publicacion)">
-  Ver postulantes
-</button>
-      <button class="btn btn-danger mt-2"
-        (click)="publicacion.idPublicacion !== undefined && eliminarPublicacion(publicacion.idPublicacion)">
-        Eliminar
-      </button>
     </div>
   </div>
-</div>
 
-<div *ngIf="!show">
-  <h2>Publicar un aviso</h2>
-  <form [formGroup]="formAviso" (submit)="crear()">
-    <div class="form-group">
-      <label for="titulo">Título</label>
-      <input id="titulo" type="text" formControlName="titulo" class="form-control" placeholder="Ingresa el título">
-      <div *ngIf="formAviso.get('titulo')?.invalid && formAviso.get('titulo')?.touched" class="text-danger">
-        El título es requerido
+  <!-- Sección de Mis Publicaciones -->
+  <div *ngIf="show" class="row">
+    <div class="col-12">
+      <div class="card shadow-sm border-0">
+        <div class="card-header bg-white border-bottom">
+          <h2 class="h4 mb-0 fw-bold">
+            <i class="bi bi-card-list text-primary me-2"></i>Mis Publicaciones
+          </h2>
+        </div>
+        
+        <div class="card-body">
+          <div *ngIf="publicaciones.length === 0" class="alert alert-info">
+            <i class="bi bi-info-circle me-2"></i>No tienes publicaciones aún.
+          </div>
+
+          <div class="row g-4">
+            <div *ngFor="let publicacion of publicaciones" class="col-md-6">
+              <div class="card h-100 border-0 shadow-sm hover-effect">
+                <div class="card-body">
+                  <div class="d-flex justify-content-between align-items-start mb-3">
+                    <h5 class="card-title fw-bold">{{ publicacion.titulo }}</h5>
+                    <span class="badge bg-primary-subtle text-primary">
+                      {{ publicacion.modalidad }}
+                    </span>
+                  </div>
+                  
+                  <p class="card-text text-muted mb-4">{{ publicacion.descripcion }}</p>
+                  
+                  <ul class="list-group list-group-flush mb-3">
+                    <li class="list-group-item d-flex align-items-center">
+                      <i class="bi bi-geo-alt text-muted me-2"></i>
+                      <span>{{ publicacion.lugar }}</span>
+                    </li>
+                    <li class="list-group-item d-flex align-items-center">
+                      <i class="bi bi-cash-coin text-muted me-2"></i>
+                      <span>S/. {{ publicacion.sueldo | number }}</span>
+                    </li>
+                    <li class="list-group-item d-flex align-items-center">
+                      <i class="bi bi-calendar text-muted me-2"></i>
+                      <span>{{ publicacion.fecha | date:'mediumDate' }}</span>
+                    </li>
+                  </ul>
+                  
+                  <div class="d-flex gap-2">
+                    <button class="btn btn-primary btn-sm" 
+                            (click)="verPostulantes(publicacion.idPublicacion!, publicacion)">
+                      <i class="bi bi-people me-1"></i>Postulantes
+                    </button>
+                    <button class="btn btn-outline-danger btn-sm"
+                            (click)="publicacion.idPublicacion !== undefined && eliminarPublicacion(publicacion.idPublicacion)">
+                      <i class="bi bi-trash me-1"></i>Eliminar
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
+  </div>
 
-    <div class="form-group">
-      <label for="publicacion">Publicación</label>
-      <textarea id="publicacion" formControlName="publicacion" class="form-control"
-        placeholder="Describe el aviso"></textarea>
-      <div *ngIf="formAviso.get('publicacion')?.invalid && formAviso.get('publicacion')?.touched" class="text-danger">
-        La descripción es requerida
+  <!-- Sección de Publicar Aviso -->
+  <div *ngIf="!show" class="row justify-content-center">
+    <div class="col-lg-8">
+      <div class="card shadow-sm border-0">
+        <div class="card-header bg-white border-bottom">
+          <h2 class="h4 mb-0 fw-bold">
+            <i class="bi bi-plus-circle text-primary me-2"></i>Publicar Nuevo Aviso
+          </h2>
+        </div>
+        
+        <div class="card-body">
+          <form [formGroup]="formAviso" (submit)="crear()">
+            <div class="mb-4">
+              <label for="titulo" class="form-label fw-bold">Título del puesto</label>
+              <input id="titulo" type="text" formControlName="titulo" class="form-control" 
+                     placeholder="Ej: Desarrollador Frontend Senior">
+              <div *ngIf="formAviso.get('titulo')?.invalid && formAviso.get('titulo')?.touched" 
+                   class="text-danger small mt-1">
+                <i class="bi bi-exclamation-circle me-1"></i>El título es requerido
+              </div>
+            </div>
+
+            <div class="mb-4">
+              <label for="publicacion" class="form-label fw-bold">Descripción del puesto</label>
+              <textarea id="publicacion" formControlName="publicacion" class="form-control" rows="5"
+                        placeholder="Describe las responsabilidades, requisitos y beneficios del puesto"></textarea>
+              <div *ngIf="formAviso.get('publicacion')?.invalid && formAviso.get('publicacion')?.touched" 
+                   class="text-danger small mt-1">
+                <i class="bi bi-exclamation-circle me-1"></i>La descripción es requerida
+              </div>
+            </div>
+
+            <div class="row g-3 mb-4">
+              <div class="col-md-6">
+                <label for="lugar" class="form-label fw-bold">Ubicación</label>
+                <input id="lugar" type="text" formControlName="lugar" class="form-control" 
+                       placeholder="Ej: Lima, Perú">
+                <div *ngIf="formAviso.get('lugar')?.invalid && formAviso.get('lugar')?.touched" 
+                     class="text-danger small mt-1">
+                  <i class="bi bi-exclamation-circle me-1"></i>El lugar es requerido
+                </div>
+              </div>
+              
+              <div class="col-md-6">
+                <label for="sueldo" class="form-label fw-bold">Sueldo ofrecido (S/.)</label>
+                <input id="sueldo" type="number" formControlName="sueldo" class="form-control" 
+                       placeholder="Ej: 5000" min="0">
+                <div *ngIf="formAviso.get('sueldo')?.invalid && formAviso.get('sueldo')?.touched" 
+                     class="text-danger small mt-1">
+                  <i class="bi bi-exclamation-circle me-1"></i>Ingrese un sueldo válido
+                </div>
+              </div>
+            </div>
+
+            <div class="mb-4">
+              <label for="modalidad" class="form-label fw-bold">Modalidad de trabajo</label>
+              <select id="modalidad" formControlName="modalidad" class="form-select">
+                <option value="">Selecciona una modalidad</option>
+                <option value="Presencial">Presencial</option>
+                <option value="Remoto">Remoto</option>
+                <option value="Híbrido">Híbrido</option>
+              </select>
+              <div *ngIf="formAviso.get('modalidad')?.invalid && formAviso.get('modalidad')?.touched" 
+                   class="text-danger small mt-1">
+                <i class="bi bi-exclamation-circle me-1"></i>Seleccione una modalidad
+              </div>
+            </div>
+
+            <div class="d-grid">
+              <button type="submit" class="btn btn-primary py-2 fw-bold" [disabled]="formAviso.invalid">
+                <i class="bi bi-send-check me-2"></i>Publicar Aviso
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
-
-    <div class="form-group">
-      <label for="lugar">Lugar</label>
-      <input id="lugar" type="text" formControlName="lugar" class="form-control" placeholder="Lugar del trabajo">
-      <div *ngIf="formAviso.get('lugar')?.invalid && formAviso.get('lugar')?.touched" class="text-danger">
-        El lugar es requerido
-      </div>
-    </div>
-
-    <div class="form-group">
-      <label for="sueldo">Sueldo</label>
-      <input id="sueldo" type="number" formControlName="sueldo" class="form-control" placeholder="Sueldo ofrecido"
-        min="0">
-      <div *ngIf="formAviso.get('sueldo')?.invalid && formAviso.get('sueldo')?.touched" class="text-danger">
-        Ingrese un sueldo válido
-      </div>
-    </div>
-
-    <div class="form-group">
-      <label for="modalidad">Modalidad</label>
-      <select id="modalidad" formControlName="modalidad" class="form-control">
-        <option value="">Selecciona la modalidad</option>
-        <option value="Presencial">Presencial</option>
-        <option value="Remoto">Remoto</option>
-        <option value="Híbrido">Híbrido</option>
-      </select>
-      <div *ngIf="formAviso.get('modalidad')?.invalid && formAviso.get('modalidad')?.touched" class="text-danger">
-        Seleccione una modalidad
-      </div>
-    </div>
-
-    <button type="submit" class="btn btn-primary mt-3" [disabled]="formAviso.invalid">Publicar</button>
-  </form>
+  </div>
 </div>
 
 <!-- Modal para postulantes (añade esto al final de tu template) -->
 <div class="modal fade" id="postulantesModal" tabindex="-1" aria-labelledby="postulantesModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-lg">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
     <div class="modal-content">
-      <!-- ... (encabezado del modal igual) ... -->
+      <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title" id="postulantesModalLabel">
+          Postulantes para: {{publicacionSeleccionada?.titulo}}
+        </h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
       <div class="modal-body">
         <div *ngIf="postulantes.length === 0" class="alert alert-info">
           No hay postulantes para esta oferta.
         </div>
         
-        <div *ngFor="let postulante of postulantes" class="card mb-3">
+        <div *ngFor="let postulante of postulantes" class="card mb-3 shadow-sm">
           <div class="card-body">
-            <h5 class="card-title">{{postulante.usuario?.nombre}} {{postulante.usuario?.apellido}}</h5>
-            <p class="card-text"><strong>Email:</strong> {{postulante.usuario?.email}}</p>
-            <p class="card-text"><strong>Teléfono:</strong> {{postulante.usuario?.telefono || 'No especificado'}}</p>
-            <p class="card-text"><strong>Fecha de postulación:</strong> {{postulante.fecha | date:'medium'}}</p>
-            <p class="card-text"><strong>Estado:</strong> {{postulante.estado}}</p>
-          </div>
-          <!-- Mover los botones DENTRO de cada card-body -->
-          <div class="card-footer bg-light">
-            <!-- Cambiar "postulacion" por "postulante" -->
-            <button *ngIf="postulante.estado !== 'DESCARTADO' && postulante.estado !== 'FINALIZADO'" 
-                    class="btn btn-sm btn-success me-2"
-                    (click)="cambiarEstadoPostulacion(postulante.id, getSiguienteEstado(postulante.estado))">
-              Siguiente fase
-            </button>
-          
-            <button *ngIf="postulante.estado !== 'DESCARTADO'"
-                    class="btn btn-sm btn-danger me-2"
-                    (click)="cambiarEstadoPostulacion(postulante.id, 'DESCARTADO')">
-              Descartar postulante
-            </button>
-          
-            <button class="btn btn-sm btn-primary" disabled>
-              Descargar CV
-            </button>
-          
-            <span *ngIf="postulante.estado === 'DESCARTADO'" class="badge bg-danger">
-              Descartado
-            </span>
+            <div class="d-flex justify-content-between align-items-start">
+              <div>
+                <h5 class="card-title mb-1">{{postulante.usuario?.nombre}} {{postulante.usuario?.apellido}}</h5>
+                <p class="text-muted mb-2"><i class="bi bi-envelope me-1"></i> {{postulante.usuario?.email}}</p>
+                <p class="text-muted mb-2">
+                  <i class="bi bi-telephone me-1"></i> 
+                  {{postulante.usuario?.telefono || 'No especificado'}}
+                </p>
+              </div>
+              <span class="badge" [ngClass]="{
+                'bg-secondary': postulante.estado === 'POSTULADO',
+                'bg-primary': postulante.estado === 'SELECCIONADO',
+                'bg-success': postulante.estado === 'FINALIZADO',
+                'bg-danger': postulante.estado === 'DESCARTADO'
+              }">
+                {{postulante.estado}}
+              </span>
+            </div>
             
-            <span *ngIf="postulante.estado === 'FINALIZADO'" class="badge bg-success">
-              Proceso finalizado
-            </span>
+            <div class="mt-3">
+              <p class="text-muted mb-2">
+                <i class="bi bi-calendar me-1"></i> 
+                Postulado el {{postulante.fecha | date:'mediumDate'}}
+              </p>
+            </div>
+          </div>
+          
+          <div class="card-footer bg-light">
+            <div class="d-flex flex-wrap gap-2">
+              <button *ngIf="postulante.estado !== 'DESCARTADO' && postulante.estado !== 'FINALIZADO'" 
+                      class="btn btn-sm btn-success"
+                      (click)="cambiarEstadoPostulacion(postulante.id, getSiguienteEstado(postulante.estado))">
+                <i class="bi bi-arrow-right-circle me-1"></i>Siguiente fase
+              </button>
+            
+              <button *ngIf="postulante.estado !== 'DESCARTADO'"
+                      class="btn btn-sm btn-danger"
+                      (click)="cambiarEstadoPostulacion(postulante.id, 'DESCARTADO')">
+                <i class="bi bi-x-circle me-1"></i>Descartar
+              </button>
+            
+              <button class="btn btn-sm btn-primary" 
+                      (click)="descargarCVPostulante(postulante.usuario?.id, postulante.usuario?.cvFilename)"
+                      [disabled]="!postulante.usuario?.cvFilename">
+                <i class="bi bi-file-earmark-pdf me-1"></i>Ver CV
+              </button>
+            </div>
           </div>
         </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          <i class="bi bi-x-lg me-1"></i>Cerrar
+        </button>
       </div>
     </div>
   </div>

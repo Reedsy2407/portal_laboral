@@ -6,6 +6,7 @@ import { RolService } from '../servicios/rol.service';
 import { Rol } from '../entidades/Rol';
 import { EmpresaService } from '../servicios/empresa.service';
 import { Empresa } from '../entidades/Empresa';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-register',
@@ -74,15 +75,15 @@ export class RegisterComponent implements OnInit {
         }
       },
       error: (error: any) => {
-        console.error('Error al cargar roles:', error);
+        Swal.fire('Error', 'Error al cargar roles', 'error');
       }
     });
   }
 
-  cargarEmpresas(){
+  cargarEmpresas() {
     this.empresaService.listarEmpresa().subscribe(data => {
       this.empresas = data;
-      console.log(data);
+      Swal.fire('Empresas cargadas', 'Se han cargado las empresas correctamente', 'info');
     });
   }
 
@@ -93,26 +94,25 @@ export class RegisterComponent implements OnInit {
     );
     this.mostrarSugerencias = true;
   }
-  
+
   seleccionarEmpresa(empresa: Empresa) {
     this.empresaId = empresa.id;
     this.formRegistro.get('empresa')?.setValue(empresa.nombre);
     this.mostrarSugerencias = false;
   }
-  
+
   ocultarSugerenciasConDelay() {
     setTimeout(() => this.mostrarSugerencias = false, 200);
   }
-  
+
   register() {
     if (this.formRegistro.invalid) {
       this.formRegistro.markAllAsTouched();
       return;
     }
 
-  
     this.cargando = true;
-  
+
     const formValue = this.formRegistro.value;
 
     const usuario = {
@@ -126,18 +126,19 @@ export class RegisterComponent implements OnInit {
         sitioWeb: formValue.sitioWeb,
         linkedin: formValue.linkedin
       },
-      empresa: { id: this.empresaId || null} 
+      empresa: { id: this.empresaId || null } 
     };
 
     this.authService.register(usuario).subscribe({
       next: (respuesta: any) => {
-        alert(respuesta);
+        Swal.fire('Registro exitoso', respuesta, 'success');
         this.formRegistro.reset();
         this.cargando = false;
         this.router.navigate(['/login']);
       },
       error: () => {
         this.cargando = false;
+        Swal.fire('Error', 'Ocurrió un error durante el registro', 'error');
       }
     });
   }
@@ -149,7 +150,7 @@ export class RegisterComponent implements OnInit {
       sitioWeb: empresaData.sitioWeb,
       linkedin: empresaData.linkedin
     };
-  
+
     const empresa = {
       nombre: empresaData.nombre,
       ruc: empresaData.ruc,
@@ -158,12 +159,16 @@ export class RegisterComponent implements OnInit {
       descripcion: empresaData.descripcion,
       contacto: contacto 
     };
-  
 
-
-    this.empresaService.guardarEmpresa(empresa).subscribe();
+    this.empresaService.guardarEmpresa(empresa).subscribe({
+      next: () => {
+        Swal.fire('Empresa guardada', 'La empresa se guardó correctamente', 'success');
+      },
+      error: () => {
+        Swal.fire('Error', 'No se pudo guardar la empresa', 'error');
+      }
+    });
   }
-  
-  
+
   
 }

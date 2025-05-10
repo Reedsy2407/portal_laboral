@@ -8,6 +8,9 @@ import { AuthService } from '../servicios/auth.service';
 import { Usuario } from '../entidades/Usuario';
 import { PostulacionService } from '../servicios/postulacion.service';
 import { Empresa } from '../entidades/Empresa';
+import Swal from 'sweetalert2';
+import { saveAs } from 'file-saver';
+
 declare var bootstrap: any; 
 
 @Component({
@@ -42,18 +45,25 @@ export class ReclutamientoComponent implements OnInit{
 
   ngOnInit(): void {
     this.usuarioService.buscarPorId(Number(this.authService.obtenerUsuarioId()))
-      .subscribe((usuario: Usuario) => {
-        this.usuarioCoincidente = usuario;
-        console.log(this.usuarioCoincidente);
-        
-        if (this.usuarioCoincidente.empresa?.id !== undefined) {
-          this.idEmpresa = this.usuarioCoincidente.empresa.id;
-          console.log(this.idEmpresa);
-          this.cargarPublicaciones();
+      .subscribe({
+        next: (usuario: Usuario) => {
+          this.usuarioCoincidente = usuario;
+          
+          if (this.usuarioCoincidente.empresa?.id !== undefined) {
+            this.idEmpresa = this.usuarioCoincidente.empresa.id;
+            this.cargarPublicaciones();
+          }
+        },
+        error: (error) => {
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'No se pudo cargar la información del usuario',
+            confirmButtonColor: '#3085d6'
+          });
         }
       });
   }
-
   cambiarEstado(estado: boolean): void {
     this.show = estado;
     if (estado) {
@@ -63,15 +73,19 @@ export class ReclutamientoComponent implements OnInit{
 
   cargarPublicaciones(): void {
     if (!this.idEmpresa) return;
-    
+
     this.publicacionService.getPublicacionesPorEmpresa(this.idEmpresa)
       .subscribe({
         next: (data: Publicacion[]) => {
           this.publicaciones = data;
         },
         error: (error) => {
-          console.error('Error al cargar publicaciones:', error);
-          alert('Error al cargar las publicaciones');
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Error al cargar las publicaciones',
+            confirmButtonColor: '#3085d6'
+          });
         }
       });
   }
@@ -80,7 +94,6 @@ export class ReclutamientoComponent implements OnInit{
     this.publicacionSeleccionada = publicacion;
     this.postulacionService.obtenerPostulacionPorPublicacionId(publicacionId).subscribe({
       next: (data) => {
-        console.log('Datos transformados:', data); // Para verificar
         this.postulantes = data;
         const modalElement = document.getElementById('postulantesModal');
         if (modalElement) {
@@ -89,7 +102,12 @@ export class ReclutamientoComponent implements OnInit{
         }
       },
       error: (err) => {
-        console.error('Error al obtener postulantes:', err);
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Error al obtener los postulantes',
+          confirmButtonColor: '#3085d6'
+        });
       }
     });
   }
@@ -102,67 +120,138 @@ export class ReclutamientoComponent implements OnInit{
         lugar: this.formAviso.value.lugar,
         sueldo: this.formAviso.value.sueldo,
         modalidad: this.formAviso.value.modalidad,
-        empresa: { id: this.idEmpresa }   // Enviar como objeto con id
+        empresa: { id: this.idEmpresa }
       };
-  
+
       this.publicacionService.crearPublicacion(nuevaPublicacion)
-        .subscribe(
-          () => {
-            alert('Publicación creada con éxito');
+        .subscribe({
+          next: () => {
+            Swal.fire({
+              icon: 'success',
+              title: 'Éxito',
+              text: 'Publicación creada con éxito',
+              confirmButtonColor: '#3085d6'
+            });
             this.formAviso.reset();
             this.cambiarEstado(true);
           },
-          error => {
-            console.error('Error al crear publicación:', error);
-            alert('Error al crear la publicación. Por favor verifica los datos.');
+          error: (error) => {
+            Swal.fire({
+              icon: 'error',
+              title: 'Error',
+              text: 'Error al crear la publicación. Por favor verifica los datos.',
+              confirmButtonColor: '#3085d6'
+            });
           }
-        );
+        });
     } else if (!this.idEmpresa) {
-      alert('No se pudo identificar la empresa asociada.');
+      Swal.fire({
+        icon: 'warning',
+        title: 'Advertencia',
+        text: 'No se pudo identificar la empresa asociada.',
+        confirmButtonColor: '#3085d6'
+      });
     }
   }
   eliminarPublicacion(idPublicacion: number): void {
-    if (confirm('¿Estás seguro de eliminar esta publicación?')) {
-      this.publicacionService.eliminarPublicacion(idPublicacion)
-        .subscribe(
-          () => {
-            this.cargarPublicaciones(); // Recargar la lista después de eliminar
-          },
-          error => {
-            console.error('Error al eliminar publicación:', error);
-          }
-        );
-    }
-  }
-
-  // En tu componente
-cambiarEstadoPostulacion(idPostulacion: number, nuevoEstado: string) { //AGREGAR CONDICIONAL VERIFICAR ID POSTULACION
-  this.postulacionService.cambiarEstadoPostulacion(idPostulacion, nuevoEstado).subscribe({
-    next: () => {
-      // Actualizar el estado localmente
-      const postulacion = this.postulantes.find(p => p.id === idPostulacion);
-      if (postulacion) {
-        postulacion.estado = nuevoEstado;
+    Swal.fire({
+      title: '¿Estás seguro?',
+      text: "No podrás revertir esta acción",
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Sí, eliminar',
+      cancelButtonText: 'Cancelar'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.publicacionService.eliminarPublicacion(idPublicacion)
+          .subscribe({
+            next: () => {
+              Swal.fire({
+                icon: 'success',
+                title: 'Eliminado',
+                text: 'La publicación ha sido eliminada',
+                confirmButtonColor: '#3085d6'
+              });
+              this.cargarPublicaciones();
+            },
+            error: (error) => {
+              Swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Error al eliminar la publicación',
+                confirmButtonColor: '#3085d6'
+              });
+            }
+          });
       }
-      
-      // Mostrar notificación (opcional)
-      const mensaje = nuevoEstado === 'DESCARTADO' 
-        ? 'Postulante descartado' 
-        : 'Estado actualizado correctamente';
-      alert(mensaje); // Puedes reemplazar esto con un toast de Angular
-    },
-    error: (err) => {
-      console.error('Error al cambiar estado:', err);
-      alert('Error al actualizar el estado');
-    }
-  });
-}
-
-getSiguienteEstado(estadoActual: string): string {
-  switch(estadoActual) {
-    case 'POSTULADO': return 'SELECCIONADO';
-    case 'SELECCIONADO': return 'FINALIZADO';
-    default: return estadoActual;
+    });
   }
-}
+  // En tu componente
+  cambiarEstadoPostulacion(idPostulacion: number, nuevoEstado: string) {
+    this.postulacionService.cambiarEstadoPostulacion(idPostulacion, nuevoEstado).subscribe({
+      next: () => {
+        const postulacion = this.postulantes.find(p => p.id === idPostulacion);
+        if (postulacion) {
+          postulacion.estado = nuevoEstado;
+        }
+
+        const mensaje = nuevoEstado === 'DESCARTADO' 
+          ? 'Postulante descartado' 
+          : 'Estado actualizado correctamente';
+        
+        Swal.fire({
+          icon: 'success',
+          title: 'Éxito',
+          text: mensaje,
+          confirmButtonColor: '#3085d6',
+          timer: 1500
+        });
+      },
+      error: (err) => {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Error al actualizar el estado',
+          confirmButtonColor: '#3085d6'
+        });
+      }
+    });
+  }
+
+  getSiguienteEstado(estadoActual: string): string {
+    switch(estadoActual) {
+      case 'POSTULADO': return 'SELECCIONADO';
+      case 'SELECCIONADO': return 'FINALIZADO';
+      default: return estadoActual;
+    }
+  }
+
+  descargarCVPostulante(idUsuario: number, nombreArchivo?: string): void {
+    if (!idUsuario) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'No se pudo identificar al usuario',
+        confirmButtonColor: '#3085d6'
+      });
+      return;
+    }
+  
+    this.usuarioService.downloadCv(idUsuario).subscribe({
+      next: (blob) => {
+        const filename = nombreArchivo || 'cv.pdf';
+        saveAs(blob, filename);
+      },
+      error: (err) => {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'No se pudo descargar el CV: ' + (err.error?.message || err.message),
+          confirmButtonColor: '#3085d6'
+        });
+      }
+    });
+  }
 }

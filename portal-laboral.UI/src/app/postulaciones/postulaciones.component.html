@@ -1,26 +1,45 @@
 <div class="container mt-4">
-  <h2>Mis Postulaciones</h2>
-  
-  <div *ngIf="postulaciones.length === 0" class="alert alert-info">
-    No tienes postulaciones registradas.
-  </div>
-
-  <div *ngFor="let postulacion of postulaciones" class="card mb-3 shadow-sm">
-    <div class="card-body">
-      <div class="d-flex justify-content-between">
-        <h5 class="card-title">{{ postulacion.publicacion.titulo }}</h5>
-        <span class="badge {{ getBadgeClass(postulacion.estado) }}">
-          {{ postulacion.estado }}
-        </span>
+  <div class="row justify-content-center">
+    <div class="col-lg-10 col-xl-8">
+      <!-- Header con título -->
+      <div class="mb-4 p-3 bg-light rounded-3">
+        <h2 class="fw-bold mb-0 text-primary">
+          <i class="bi bi-file-earmark-text me-2"></i>Mis Postulaciones
+        </h2>
       </div>
-      <h6 class="card-subtitle mb-2 text-muted">
-        {{ postulacion.publicacion.empresa.nombre }}
-      </h6>
-      <p class="card-text">
-        <small class="text-muted">
-          Postulado el {{ parseFecha(postulacion.fecha) | date:'dd/MM/yyyy' }}
-        </small>
-      </p>
+
+      <!-- Estado vacío -->
+      <div *ngIf="postulaciones.length === 0" class="card border-0 shadow-sm p-5 text-center my-4">
+        <i class="bi bi-inbox text-muted display-4 mb-3"></i>
+        <h4 class="text-muted mb-3">No tienes postulaciones</h4>
+        <p class="text-muted">Tus postulaciones a ofertas aparecerán aquí</p>
+      </div>
+
+      <!-- Lista de postulaciones -->
+      <div class="postulaciones-list">
+        <div *ngFor="let postulacion of postulaciones" class="card mb-4 border-0 shadow-sm hover-effect">
+          <div class="card-body p-4">
+            <div class="d-flex justify-content-between align-items-start mb-3">
+              <div>
+                <h4 class="card-title fw-bold mb-1">{{ postulacion.publicacion.titulo }}</h4>
+                <h5 class="card-subtitle text-muted">
+                  <i class="bi bi-building me-1"></i>{{ postulacion.publicacion.empresa.nombre }}
+                </h5>
+              </div>
+              <span class="badge {{ getBadgeClass(postulacion.estado) }} py-2 px-3">
+                {{ postulacion.estado }}
+              </span>
+            </div>
+
+            <div class="d-flex align-items-center">
+              <i class="bi bi-calendar3 text-muted me-2"></i>
+              <small class="text-muted">
+                Postulado el {{ parseFecha(postulacion.fecha) | date:'dd/MM/yyyy' }}
+              </small>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>

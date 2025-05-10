@@ -20,4 +20,40 @@
     border-width: 2px !important;
     box-shadow: 0 0 0 0.15rem rgba(13, 110, 253, 0.25);
   }
+  .cursor-pointer {
+    cursor: pointer;
+  }
   
+  .hover-effect:hover {
+    background-color: #f8f9fa;
+    transition: background-color 0.2s ease;
+  }
+  
+  /* Estilos para los badges de estado */
+  .badge {
+    padding: 0.35em 0.65em;
+    font-size: 0.75em;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+
+  .cursor-pointer {
+    cursor: pointer;
+  }
+  
+  .hover-effect:hover {
+    background-color: #f8f9fa;
+    transition: background-color 0.2s ease;
+  }
+  
+  .badge {
+    padding: 0.35em 0.65em;
+    font-size: 0.75em;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+  
+  .container-fluid {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
