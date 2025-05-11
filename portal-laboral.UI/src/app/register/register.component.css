@@ -176,3 +176,24 @@
 .sugerencias-lista li:hover {
   background-color: #eee;
 }
+
+.sugerencias-lista {
+  position: absolute;       /* Flota respecto al primer contenedor con position: relative */
+  width: 100%;              /* Toma el ancho de su contenedor padre relativo */
+  max-width: 100%;          /* Evita que lo supere */
+  background: white;        /* Opcional: para que se vea bien sobre otros elementos */
+  border: 1px solid #ccc;   /* Opcional: para diferenciar las sugerencias */
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  z-index: 1000;            /* Para que esté sobre otros elementos */
+}
+
+.sugerencias-lista li {
+  padding: 8px;
+  cursor: pointer;
+}
+
+.sugerencias-lista li:hover {
+  background-color: #f0f0f0;
+}

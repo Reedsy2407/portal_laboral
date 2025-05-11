@@ -46,20 +46,21 @@
         <input type="text" formControlName="linkedin" placeholder="LinkedIn" />
       </div>
 
-      <div class="form-group" *ngIf="formRegistro.get('rolId')?.value === empresaRolId">
-        <input type="text"
-       formControlName="empresa"
-       placeholder="Empresa a la que perteneces"
-       (blur)="ocultarSugerenciasConDelay()" 
-       (focus)="mostrarSugerencias = true"
-       autocomplete="off"/>
-      
-        <ul *ngIf="mostrarSugerencias && empresasFiltradas.length > 0" class="sugerencias-lista">
-          <li *ngFor="let empresa of empresasFiltradas" (mousedown)="seleccionarEmpresa(empresa)">
-            {{ empresa.nombre }}
-          </li>
-        </ul>
-      </div>
+ <div class="form-group" style="position: relative;" *ngIf="formRegistro.get('rolId')?.value === empresaRolId">
+  <input type="text"
+         formControlName="empresa"
+         placeholder="Empresa a la que perteneces"
+         (blur)="ocultarSugerenciasConDelay()" 
+         (focus)="mostrarSugerencias = true"
+         autocomplete="off"/>
+  
+  <ul *ngIf="mostrarSugerencias && empresasFiltradas.length > 0" class="sugerencias-lista">
+    <li *ngFor="let empresa of empresasFiltradas" (mousedown)="seleccionarEmpresa(empresa)">
+      {{ empresa.nombre }}
+    </li>
+  </ul>
+</div>
+
       
       
       
