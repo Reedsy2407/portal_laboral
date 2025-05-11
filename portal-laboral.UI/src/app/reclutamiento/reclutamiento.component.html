@@ -13,6 +13,11 @@
             <i class="bi bi-plus-circle me-2"></i>Publicar Aviso
           </a>
         </li>
+        <li class="nav-item">
+          <a class="nav-link" (click)="mostrarEliminadas()">
+            <i class="bi bi-trash me-2"></i>Ver ofertas eliminadas
+          </a>
+        </li>
       </ul>
     </div>
   </div>
@@ -23,7 +28,8 @@
       <div class="card shadow-sm border-0">
         <div class="card-header bg-white border-bottom">
           <h2 class="h4 mb-0 fw-bold">
-            <i class="bi bi-card-list text-primary me-2"></i>Mis Publicaciones
+            <i class="bi bi-card-list text-primary me-2"></i>
+            {{ mostrandoEliminadas ? 'Publicaciones Eliminadas' : 'Mis Publicaciones' }}
           </h2>
         </div>
         
@@ -34,41 +40,84 @@
 
           <div class="row g-4">
             <div *ngFor="let publicacion of publicaciones" class="col-md-6">
-              <div class="card h-100 border-0 shadow-sm hover-effect">
-                <div class="card-body">
-                  <div class="d-flex justify-content-between align-items-start mb-3">
-                    <h5 class="card-title fw-bold">{{ publicacion.titulo }}</h5>
-                    <span class="badge bg-primary-subtle text-primary">
-                      {{ publicacion.modalidad }}
-                    </span>
+              <div *ngIf="publicacion.estado === 'creado'">
+
+                <div class="card h-100 border-0 shadow-sm hover-effect">
+                  <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                      <h5 class="card-title fw-bold">{{ publicacion.titulo }}</h5>
+                      <span class="badge bg-primary-subtle text-primary">
+                        {{ publicacion.modalidad }}
+                      </span>
+                    </div>
+                    
+                    <p class="card-text text-muted mb-4">{{ publicacion.descripcion }}</p>
+                    
+                    <ul class="list-group list-group-flush mb-3">
+                      <li class="list-group-item d-flex align-items-center">
+                        <i class="bi bi-geo-alt text-muted me-2"></i>
+                        <span>{{ publicacion.lugar }}</span>
+                      </li>
+                      <li class="list-group-item d-flex align-items-center">
+                        <i class="bi bi-cash-coin text-muted me-2"></i>
+                        <span>S/. {{ publicacion.sueldo | number }}</span>
+                      </li>
+                      <li class="list-group-item d-flex align-items-center">
+                        <i class="bi bi-calendar text-muted me-2"></i>
+                        <span>{{ publicacion.fecha | date:'mediumDate' }}</span>
+                      </li>
+                    </ul>
+                    
+                    <div class="d-flex gap-2">
+                      <button class="btn btn-primary btn-sm" 
+                              (click)="verPostulantes(publicacion.idPublicacion!, publicacion)">
+                        <i class="bi bi-people me-1"></i>Postulantes
+                      </button>
+                      <button class="btn btn-outline-danger btn-sm"
+                              (click)="publicacion.idPublicacion !== undefined && eliminarPublicacion(publicacion.idPublicacion)">
+                        <i class="bi bi-trash me-1"></i>Eliminar
+                      </button>
+                    </div>
                   </div>
-                  
-                  <p class="card-text text-muted mb-4">{{ publicacion.descripcion }}</p>
-                  
-                  <ul class="list-group list-group-flush mb-3">
-                    <li class="list-group-item d-flex align-items-center">
-                      <i class="bi bi-geo-alt text-muted me-2"></i>
-                      <span>{{ publicacion.lugar }}</span>
-                    </li>
-                    <li class="list-group-item d-flex align-items-center">
-                      <i class="bi bi-cash-coin text-muted me-2"></i>
-                      <span>S/. {{ publicacion.sueldo | number }}</span>
-                    </li>
-                    <li class="list-group-item d-flex align-items-center">
-                      <i class="bi bi-calendar text-muted me-2"></i>
-                      <span>{{ publicacion.fecha | date:'mediumDate' }}</span>
-                    </li>
-                  </ul>
-                  
-                  <div class="d-flex gap-2">
-                    <button class="btn btn-primary btn-sm" 
-                            (click)="verPostulantes(publicacion.idPublicacion!, publicacion)">
-                      <i class="bi bi-people me-1"></i>Postulantes
-                    </button>
-                    <button class="btn btn-outline-danger btn-sm"
-                            (click)="publicacion.idPublicacion !== undefined && eliminarPublicacion(publicacion.idPublicacion)">
-                      <i class="bi bi-trash me-1"></i>Eliminar
-                    </button>
+                </div>
+
+              </div>
+              
+              <div *ngIf="publicacion.estado == 'eliminado'">
+                <div class="card h-100 border-0 shadow-sm" style="opacity: 0.7; background-color: #f8f9fa;">
+                  <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                      <h5 class="card-title fw-bold">{{ publicacion.titulo }}</h5>
+                      <span class="badge bg-danger-subtle text-danger">
+                        Eliminado
+                      </span>
+                    </div>
+                    
+                    <p class="card-text text-muted mb-4">{{ publicacion.descripcion }}</p>
+                    
+                    <ul class="list-group list-group-flush mb-3">
+                      <li class="list-group-item d-flex align-items-center">
+                        <i class="bi bi-geo-alt text-muted me-2"></i>
+                        <span>{{ publicacion.lugar }}</span>
+                      </li>
+                      <li class="list-group-item d-flex align-items-center">
+                        <i class="bi bi-cash-coin text-muted me-2"></i>
+                        <span>S/. {{ publicacion.sueldo | number }}</span>
+                      </li>
+                      <li class="list-group-item d-flex align-items-center">
+                        <i class="bi bi-calendar text-muted me-2"></i>
+                        <span>{{ publicacion.fecha | date:'mediumDate' }}</span>
+                      </li>
+                    </ul>
+                    
+                    <div class="d-flex gap-2">
+                      <button class="btn btn-outline-secondary btn-sm" disabled>
+                        <i class="bi bi-people me-1"></i>Postulantes
+                      </button>
+                      <button class="btn btn-outline-secondary btn-sm" disabled>
+                        <i class="bi bi-trash me-1"></i>Eliminado
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>

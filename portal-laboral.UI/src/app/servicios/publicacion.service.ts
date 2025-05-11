@@ -24,6 +24,6 @@ export class PublicacionService {
   }
 
   eliminarPublicacion(idPublicacion: number): Observable<any> {
-    return this.http.delete(`${API.url + this.request}/eliminarPublicacion/${idPublicacion}`);
+    return this.http.put(`${API.url + this.request}/eliminarPublicacion`, idPublicacion);
   }
 }

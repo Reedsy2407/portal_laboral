@@ -45,8 +45,8 @@ public class PublicacionController {
         return publicacionService.buscarPorId(id);
     }
 
-    @PutMapping("/eliminarPublicacion/{id}")
-    public ResponseEntity<String> eliminar(@PathVariable Integer id) {
+    @PutMapping("/eliminarPublicacion")
+    public ResponseEntity<String> eliminar(@RequestBody Integer id) {
         Publicacion publicacion = publicacionService.buscarPorId(id);
 
         publicacion.setEstado("eliminado");

@@ -66,8 +66,8 @@ public ResponseEntity<?> register(@RequestBody Usuario usuario) {
 
         usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
 
-        if (usuario.getRol().getId() == 3) { 
-            if (usuario.getEmpresa() == null) {
+        if (usuario.getRol().getId() == 3) {
+                if (usuario.getEmpresa() == null) {
                 return ResponseEntity.badRequest().body("Los empleadores deben tener una empresa asociada");
             }
             

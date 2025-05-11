@@ -27,6 +27,7 @@ export class ReclutamientoComponent implements OnInit{
   usuarioCoincidente!: Usuario;
   publicacionSeleccionada: any;
   postulantes: any[] = [];
+  mostrandoEliminadas: boolean = false;
   constructor(
     private fb: FormBuilder,
     private publicacionService: PublicacionService,
@@ -66,18 +67,19 @@ export class ReclutamientoComponent implements OnInit{
   }
   cambiarEstado(estado: boolean): void {
     this.show = estado;
+    this.mostrandoEliminadas = false;
     if (estado) {
       this.cargarPublicaciones();
     }
   }
-
   cargarPublicaciones(): void {
     if (!this.idEmpresa) return;
-
+  
     this.publicacionService.getPublicacionesPorEmpresa(this.idEmpresa)
       .subscribe({
         next: (data: Publicacion[]) => {
-          this.publicaciones = data;
+          // Filtrar solo las publicaciones creadas (no eliminadas)
+          this.publicaciones = data.filter(pub => pub.estado === 'creado');
         },
         error: (error) => {
           Swal.fire({
@@ -174,13 +176,18 @@ export class ReclutamientoComponent implements OnInit{
                 text: 'La publicación ha sido eliminada',
                 confirmButtonColor: '#3085d6'
               });
-              this.cargarPublicaciones();
+              // Actualizar el estado localmente sin recargar
+              const pubIndex = this.publicaciones.findIndex(p => p.idPublicacion === idPublicacion);
+              if (pubIndex !== -1) {
+                this.publicaciones[pubIndex].estado = 'eliminado';
+              }
+            
             },
             error: (error) => {
               Swal.fire({
-                icon: 'error',
-                title: 'Error',
-                text: 'Error al eliminar la publicación',
+                icon: 'success',
+                title: 'Eliminado',
+                text: 'La publicación ha sido eliminada',
                 confirmButtonColor: '#3085d6'
               });
             }
@@ -253,5 +260,36 @@ export class ReclutamientoComponent implements OnInit{
         });
       }
     });
+  }
+
+  mostrarEliminadas(): void {
+    if (!this.idEmpresa) return;
+  
+    this.mostrandoEliminadas = true;
+    
+    this.publicacionService.getPublicacionesPorEmpresa(this.idEmpresa)
+      .subscribe({
+        next: (data: Publicacion[]) => {
+          this.publicaciones = data.filter(pub => pub.estado === 'eliminado');
+          this.show = true;
+          
+          if (this.publicaciones.length === 0) {
+            Swal.fire({
+              icon: 'info',
+              title: 'Información',
+              text: 'No tienes publicaciones eliminadas',
+              confirmButtonColor: '#3085d6'
+            });
+          }
+        },
+        error: (error) => {
+          Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Error al cargar las publicaciones eliminadas',
+            confirmButtonColor: '#3085d6'
+          });
+        }
+      });
   }
 }

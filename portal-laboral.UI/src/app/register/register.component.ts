@@ -102,7 +102,7 @@ export class RegisterComponent implements OnInit {
   }
 
   ocultarSugerenciasConDelay() {
-    setTimeout(() => this.mostrarSugerencias = false, 200);
+    setTimeout(() => this.mostrarSugerencias = false, 1);
   }
 
   register() {
