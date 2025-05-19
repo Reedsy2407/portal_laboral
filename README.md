@@ -32,9 +32,10 @@
 
 ```text
 /
-├── .gitignore
 ├── README.md
-├── LICENSE
+├── .idea
+├── db.txt (ejecutar este script)
+├── FASTER Free Website Template - Free-CSS.com (plantilla necesaria para el proyecto)
 ├── portal-laboral.API/                   ← Spring Boot REST API
 │   ├── pom.xml
 │   └── src/
@@ -92,9 +93,38 @@ Postman o Imsomnia para probar endpoints
 📁 1. Inicializar la base de datos MySQL
 Abre MySQL Workbench (u otro cliente).
 
-Ejecuta este script para crear la base de datos:
+Ejecuta este script para crear la base de datos y sus inserts necesarios(se encuentra dentro de bd.txt tambien):
+create database dbPortalLaboral
+use dbPortalLaboral
 
-CREATE DATABASE dbPortalLaboral;
+INSERT INTO tb_menu (nombre, url) VALUES 
+('Login', '/login')
+
+Insert into tb_menu (nombre, url) values
+('Mis Postulaciones', '/postulaciones')
+
+Insert into tb_menu (nombre, url) values
+('Reclutamiento', '/reclutamiento')
+
+Insert into tb_menu (nombre, url) values
+('Ver Ofertas', '/ofertas')
+
+INSERT INTO tb_menu (nombre, url) VALUES 
+('Ver Perfil', '/perfil');
+
+INSERT INTO tb_rol (nombre) VALUES 
+('ADMIN'),
+('POSTULANTE'),
+('EMPRESA');
+
+insert into tb_menu_rol (id_menu, id_rol) values 
+(1,1),(2,1),(3,1),(4,1),(5,1),(1,2),(2,2),(4,2),(5,2),(1,3),(3,3),(5,3)
+
+
+INSERT INTO tb_modalidad (modalidad) VALUES
+('Presencial'),
+('Remoto'),
+('Híbrido');
 
 ⚙️ 2. Configurar la API (Back-end)
 Abre la carpeta portal-laboral.API/ en tu IDE favorito (IntelliJ, Eclipse o VS Code).
